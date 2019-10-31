@@ -1,0 +1,24 @@
+html, body {
+    margin: 0;
+    height: 100%;
+	width: 100%;
+}
+
+.navbar-custom {
+    background-color: #14558f;
+	height: 40px;
+	color: #FFFFFF;
+}
+
+#mainDiv{
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
+.nav-link, .btn.my-sm-0 {
+	color: #FFFFFF;
+}
+
+.sideContents{
+    padding-top: 15px;
+}
