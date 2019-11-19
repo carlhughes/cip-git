@@ -3,12 +3,13 @@ $(document).ready(function () {
   require(["esri/views/MapView", "esri/Map", "esri/WebMap", "esri/layers/MapImageLayer", "esri/tasks/QueryTask", "esri/tasks/support/Query", "esri/core/watchUtils",
     "esri/widgets/Search",
     "esri/layers/FeatureLayer",
+    "esri/layers/GraphicsLayer",
     "esri/tasks/Locator",
     "esri/Graphic"
-  ], function (MapView, Map, WebMap, MapImageLayer, QueryTask, Query, watchUtils, Search, FeatureLayer, Locator, Graphic) {
+  ], function (MapView, Map, WebMap, MapImageLayer, QueryTask, Query, watchUtils, Search, FeatureLayer, GraphicsLayer, Locator, Graphic) {
     var projId;
     var reset;
-
+    var extentForRegionOfInterest = false;
     var map = new Map({
       basemap: "topo"
     });
@@ -29,6 +30,10 @@ $(document).ready(function () {
 
     var queryProjectTask = new QueryTask({
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/0"
+    });
+
+    var townLayer = new FeatureLayer({
+      url: "https://gis.massdot.state.ma.us/arcgis/rest/services/Boundaries/Towns/MapServer/0",
     });
 
     var commentLayer = new FeatureLayer({
@@ -100,6 +105,8 @@ $(document).ready(function () {
 
     map.add(projectLocations); // adds the layer to the map
 
+	//view.spatialReference = townLayer.spatialReference;
+	  
     view.on('click', function (event) {
       projId;
       $('#helpContents').hide();
@@ -125,6 +132,32 @@ $(document).ready(function () {
       filterMap();
     });
 
+	  
+    $("#townSelect").change(function () {
+      var query = townLayer.createQuery();
+      if ($("#townSelect").val() > 0) {
+        query.where = "TOWN_ID = " + $("#townSelect").val();
+        query.returnGeometry = true;
+        query.outFields = ["TOWN_ID", "TOWN"];
+		  query.outSpatialReference = view.spatialReference;
+        townLayer.queryFeatures(query)
+          .then(function (response) {
+			console.log(response.features[0].geometry);
+            extentForRegionOfInterest = response.features[0].geometry
+			// go to point at LOD 15 with custom duration
+			view.goTo({
+			  target: response.features[0].geometry,
+			  zoom: 5
+			});
+			filterMap();
+          });
+      } else {
+        extentForRegionOfInterest = false;
+        filterMap();
+      }
+    });
+
+
     $("#aboutTool").click(function () {
       $('#commentForm').hide()
       $('#projectList').hide();
@@ -133,8 +166,11 @@ $(document).ready(function () {
 
     });
 
+    var resultsLayer = new GraphicsLayer();
+    map.add(resultsLayer);
 
     function filterMap() {
+      resultsLayer.removeAll();
       sql = "1=1"
       var divisions = "(1=1)";
       if ($("#division").val() !== "All") {
@@ -142,7 +178,6 @@ $(document).ready(function () {
       } else {
         divisions = "1=1"
       }
-
       programs = "(1=1)"
       if ($("#programs").val()[0] == 'All') {
         programs = "(1=1)"
@@ -155,11 +190,29 @@ $(document).ready(function () {
           }
         });
       }
-
       $("#minValue").html("Minimum project cost: $" + parseInt($("#min").val().replace(/\D/g, '')).toLocaleString())
       $("#maxValue").html("Maximum project cost: $" + parseInt($("#max").val().replace(/\D/g, '')).toLocaleString())
       sql = sql + " AND (" + divisions + ") AND (" + programs + ") AND ( Total__M >= " + $("#min").val() + " AND Total__M <= " + $("#max").val() + ")"
       projectLocations.findSublayerById(1).definitionExpression = sql;
+      queryParams = projectLocations.findSublayerById(1).createQuery();
+      if (extentForRegionOfInterest == false) {} else {
+        queryParams.geometry = extentForRegionOfInterest;
+      }
+      queryParams.where = sql;
+      projectLocations.findSublayerById(1).queryFeatures(queryParams).then(function (results) {
+        view.goTo(extentForRegionOfInterest);
+        var features = results.features.map(function (graphic) {
+          graphic.symbol = {
+            type: "simple-line",
+            cap: "round",
+            width: 4,
+            color: [255, 0, 197, 0.51]
+          };
+          return graphic;
+        });
+        resultsLayer.addMany(features).then(function (results) {
+        });
+      });
     }
 
     function showComments(projId) {
@@ -195,10 +248,10 @@ $(document).ready(function () {
 
     }
 
-    $("#commentForm").submit(function (event) {		  		    
-		event.preventDefault();
-        formValue = $(this).serializeArray()
-        submitComment(formValue);
+    $("#commentForm").submit(function (event) {
+      event.preventDefault();
+      formValue = $(this).serializeArray()
+      submitComment(formValue);
     })
 
     function submitComment(formValue) {
