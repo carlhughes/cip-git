@@ -3,30 +3,16 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=7,IE=9">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
-	
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-	
-
 <link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css"/>
 <script src="https://js.arcgis.com/4.13/"></script> 
-	
-	
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>	
-	
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
-	
-
-<link rel="stylesheet" href="css/style.css"/>
-<script src="js/map.js"></script> 
 <script src="js/controls.js"></script>
-	
-	
-	
-	
+<link rel="stylesheet" href="css/style.css"/>
+<script src="js/map.js"></script>
 </head>
 <body>
 <div id="mainDiv" class="container-fluid h-100 w-100 d-flex flex-column">
@@ -47,7 +33,7 @@
         <div class="col w-15 h-100 sideContents" >
           <h4>Filter Projects</h4>
           <label for="searchPlace">Project/Address Search</label>
-		  <div id="searchPlace" class="form-control mr-sm-2  filter w-100"></div>
+          <div id="searchPlace" class="form-control mr-sm-2  filter w-100"></div>
           <label for="division">MassDOT Division</label>
           <select class="form-control filter" id="division">
             <option>All</option>
@@ -57,16 +43,17 @@
             <option>RMV</option>
             <option>Aeronautics</option>
           </select>
-		  <label for="townSelect">Town</label>
+          <label for="townSelect">Town</label>
           <select class="form-control town-filter" id="townSelect">
-	        <option value="0">All</option>
+            <option value="0">All</option>
           </select>
           <label for="programs">CIP Program</label>
           <select class="custom-select filter" id="programs" multiple>
             <option selected>All</option>
           </select>
-          <label for="customRange1" id="values">Minimum project cost: $0</label>
-	  		<div id="cost-range"></div>
+			<label for="amount">Price range:</label>
+          <label for="customRange1" id="rangeSliderValues" readonly style="border:0; color:#1622AB; font-weight:bold;">$0 - $100,000,000</label>
+          <div id="cost-range" 	class="filter"></div>
         </div>
         <div class="col-8 w-70 h-99">
           <div id="viewDiv" class="w-100 p-0 h-100" ></div>
@@ -91,7 +78,7 @@
           </div>
           <div class="w-100 h-80 container-fluid sideContents" id="helpContents">
             <h4 class="w-100 h-10">Welcome to the CIP Comment Tool and Interactive Map!</h4>
-			  <p>This map serves as a location for the public to provide its feedback on CIP projects in Massachusetts. As we take a look at the concept for the corridor, please keep in mind that the design is meant to accommodate the long-term evolution of Route 20 based on planned new development in this part of the Town of Shrewsbury. You may provide comments on existing conditions in the corridor, but please consider adding comments on how the long-term concept works for you and the town, including how it plans to address land use and transportation goals.</p>
+            <p>This map serves as a location for the public to provide its feedback on CIP projects in Massachusetts. As we take a look at the concept for the corridor, please keep in mind that the design is meant to accommodate the long-term evolution of Route 20 based on planned new development in this part of the Town of Shrewsbury. You may provide comments on existing conditions in the corridor, but please consider adding comments on how the long-term concept works for you and the town, including how it plans to address land use and transportation goals.</p>
           </div>
         </div>
       </div>
