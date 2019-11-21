@@ -22,3 +22,7 @@ html, body {
 .sideContents{
     padding-top: 15px;
 }
+
+select{
+	padding-bottom: 6px;
+}

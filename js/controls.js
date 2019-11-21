@@ -9,13 +9,22 @@ $(document).ready(function () {
     });
 
   });
-
+  $("#cost-range").slider({
+    range: true,
+    min: 0,
+    max: 1000000,
+    values: [0, 1000000],
+    slide: function (event, ui) {
+      $("#minAmount").val("₹" + ui.values[0] + " - ₹" + ui.values[1]);
+	  $("#amount").val("₹" + ui.values[0] + " - ₹" + ui.values[1]);
+    }
+  });
 
   $.post("https://gis.massdot.state.ma.us/arcgis/rest/services/Boundaries/Towns/MapServer/0/query", {
       where: "1=1",
       outFields: "TOWN, TOWN_ID",
       returnGeometry: false,
-	  orderByFields: 'TOWN_ID',
+      orderByFields: 'TOWN_ID',
       f: 'pjson'
     })
     .done(function (data) {
@@ -26,6 +35,6 @@ $(document).ready(function () {
           $('<option></option>').val(this.attributes.TOWN_ID).html(this.attributes.TOWN)
         );
       });
-	  
+
     });
 });

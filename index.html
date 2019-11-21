@@ -3,14 +3,30 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=7,IE=9">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+	
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	
+
 <link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css"/>
 <script src="https://js.arcgis.com/4.13/"></script> 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> 
+	
+	
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>	
+	
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+	
+
+<link rel="stylesheet" href="css/style.css"/>
 <script src="js/map.js"></script> 
 <script src="js/controls.js"></script>
-<link rel="stylesheet" href="css/style.css"/>
+	
+	
+	
+	
 </head>
 <body>
 <div id="mainDiv" class="container-fluid h-100 w-100 d-flex flex-column">
@@ -32,7 +48,6 @@
           <h4>Filter Projects</h4>
           <label for="searchPlace">Project/Address Search</label>
 		  <div id="searchPlace" class="form-control mr-sm-2  filter w-100"></div>
-          </br>
           <label for="division">MassDOT Division</label>
           <select class="form-control filter" id="division">
             <option>All</option>
@@ -42,24 +57,19 @@
             <option>RMV</option>
             <option>Aeronautics</option>
           </select>
-          </br>
-		   <label for="townSelect">Town</label>
+		  <label for="townSelect">Town</label>
           <select class="form-control town-filter" id="townSelect">
 	        <option value="0">All</option>
           </select>
-		<br>
           <label for="programs">CIP Program</label>
           <select class="custom-select filter" id="programs" multiple>
             <option selected>All</option>
           </select>
-          </br>
-          <label for="customRange1" id="minValue">Minimum project cost: $0</label>
-          <input type="range" class="custom-range  filter" id="min" min="0" max="100000000" value="0" step="1000000">
-          <label for="customRange1" id="maxValue">Maximum project cost: $10,000,000</label>
-          <input type="range" class="custom-range  filter" id="max" min="0" max="100000000" value="100000000" step="1000000">
+          <label for="customRange1" id="values">Minimum project cost: $0</label>
+	  		<div id="cost-range"></div>
         </div>
         <div class="col-8 w-70 h-99">
-          <div id="viewDiv" class="w-100 p-3 h-100" ></div>
+          <div id="viewDiv" class="w-100 p-0 h-100" ></div>
         </div>
         <div class="col w-15 h-100 container-fluid">
           <form id="commentForm" class= "w-100 h-20 sideContents" style="display: none">
@@ -73,7 +83,7 @@
               <textarea class="form-control" id="commentField" placeholder="Enter your comments here" name="commentField" required></textarea>
               <div class="invalid-feedback"> Please enter a comment in the textarea. </div>
             </div>
-            <button class="btn btn-primary" id="submitComment" type="submit">Submit Comment</button></br></br>
+            <button class="btn btn-primary" id="submitComment" type="submit">Submit Comment</button>
           </form>
           <div class="w-100 h-80" id="projectList" style="display: none">
             <h4 class="w-100 h-10">Existing Comments</h4>
