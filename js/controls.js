@@ -23,7 +23,7 @@ $(document).ready(function () {
 	  		$('#programs')
 			.empty()
 			.append('<option selected="selected" value="All">All</option>');
-    $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/1/query", {
+    $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/0/query", {
         where: "Division ='" + division + "'",
         outFields: "Program",
         returnGeometry: false,

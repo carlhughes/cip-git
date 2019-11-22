@@ -5,8 +5,9 @@ $(document).ready(function () {
     "esri/layers/FeatureLayer",
     "esri/layers/GraphicsLayer",
     "esri/tasks/Locator",
+		     "esri/views/layers/support/FeatureFilter",
     "esri/Graphic"
-  ], function (MapView, Map, WebMap, MapImageLayer, QueryTask, Query, watchUtils, Search, FeatureLayer, GraphicsLayer, Locator, Graphic) {
+  ], function (MapView, Map, WebMap, MapImageLayer, QueryTask, Query, watchUtils, Search, FeatureLayer, GraphicsLayer, Locator, FeatureFilter, Graphic) {
     var projId;
     var reset;
     var extentForRegionOfInterest = false;
@@ -14,11 +15,9 @@ $(document).ready(function () {
     var map = new Map({
       basemap: "topo"
     });
-
-    var projectLocations = new MapImageLayer({
-      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer",
-      sublayers: [{
-        id: 1,
+	  
+    var projectLocations = new FeatureLayer({
+      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/1",
         outFields: ["*"],
         visible: true,
         popupEnabled: true,
@@ -26,7 +25,18 @@ $(document).ready(function () {
           title: "{Project_Description}",
           content: popupFunction
         }
-      }]
+    });
+	  
+	  
+    var projectLocationsPoints = new FeatureLayer({
+      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/3",
+        outFields: ["*"],
+        visible: true,
+        popupEnabled: true,
+        popupTemplate: {
+          title: "{Project_Description}",
+          content: popupFunction
+        }
     });
 
     var townLayer = new FeatureLayer({
@@ -47,7 +57,7 @@ $(document).ready(function () {
       center: [-71.8, 42] // Sets center point of view using longitude,latitude
     });
 
-    map.addMany([resultsLayer, projectLocations]);
+    map.addMany([resultsLayer, projectLocations, projectLocationsPoints]);
 
 
     function popupFunction(target) {
@@ -61,7 +71,7 @@ $(document).ready(function () {
           projId = attributes.ProjectID;
           showComments(projId);
         }
-        return "<p id='popupFeatureSelected' val='" + attributes.ProjectID + "'>" + attributes.ProjectID + "</br>MassDOT Division: " + attributes.Division + "</br> Location: " + attributes.Location + "</br> Program: " + attributes.Program + "</br> Total Cost: " + attributes.Total__M + "</p>";
+        return "<p id='popupFeatureSelected' val='" + attributes.ProjectID + "'>" + attributes.ProjectID + "</br><a href='https://hwy.massdot.state.ma.us/projectinfo/projectinfo.asp?num=" + attributes.ProjectID + "' target=blank id='pinfoLink'>Project Info Link</a></br>MassDOT Division: " + attributes.Division + "</br> Location: " + attributes.Location + "</br> Program: " + attributes.Program + "</br> Total Cost: " + attributes.Total__M + "</p>Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
       });
     }
 
@@ -79,6 +89,27 @@ $(document).ready(function () {
       sources: [{
         layer: new FeatureLayer({
           url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/1",
+          outFields: ["*"],
+          popupTemplate: {
+            title: "{Project_Description}",
+            content: popupFunction
+          }
+        }),
+        searchFields: ["Project_Description", "Program"],
+        displayField: "Project_Description",
+        exactMatch: false,
+        outFields: ["*"],
+        name: "CIP Projects",
+        placeholder: "example: Red-Blue Connector",
+        maxResults: 60,
+        maxSuggestions: 6,
+        suggestionsEnabled: true,
+        minSuggestCharacters: 2,
+        popupEnabled: true,
+        autoNavigate: true
+      },{
+        layer: new FeatureLayer({
+          url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/3",
           outFields: ["*"],
           popupTemplate: {
             title: "{Project_Description}",
@@ -140,7 +171,7 @@ $(document).ready(function () {
             view.goTo({
               target: response.features[0].geometry,
             });
-            //filterMap();
+            filterMap();
           });
       } else {
         extentForRegionOfInterest = false;
@@ -173,29 +204,30 @@ $(document).ready(function () {
       maxCost = $("#cost-range").slider("values", 1)
 
       sql = sql + " AND (" + divisionsSQL + ") AND (" + programsSQL + ") AND ( Total__M >= " + minCost + " AND Total__M <= " + maxCost + ")"
-      projectLocations.findSublayerById(1).definitionExpression = sql;
+		
+		
+		
+      projectLocations.definitionExpression = sql;
+	  projectLocationsPoints.definitionExpression = sql;
 
-      queryParams = projectLocations.findSublayerById(1).createQuery();
-      if (extentForRegionOfInterest == false) {} else {
+      queryParams = projectLocations.createQuery();
+      queryParams.where = sql;
+	  if (extentForRegionOfInterest == false) {} else {
         queryParams.geometry = extentForRegionOfInterest;
       }
-      queryParams.where = sql;
-      /*
-            projectLocations.findSublayerById(1).queryFeatures(queryParams).then(function (results) {
-              view.goTo(extentForRegionOfInterest);
-              var features = results.features.map(function (graphic) {
-                graphic.symbol = {
-                  type: "simple-line",
-                  cap: "round",
-                  width: 4,
-                  color: [255, 0, 197, 0.51]
-                };
-                return graphic;
-              });
-              resultsLayer.addMany(features).then(function (results) {
-              });
-            });
-      */
+
+      view.whenLayerView(projectLocations).then(function (layerView) {
+		  layerView.filter = new FeatureFilter({
+          geometry: extentForRegionOfInterest,
+          spatialRelationship: "intersects",
+        });
+      });
+      view.whenLayerView(projectLocationsPoints).then(function (layerView) {
+		  layerView.filter = new FeatureFilter({
+          geometry: extentForRegionOfInterest,
+          spatialRelationship: "intersects",
+        });
+      });	
     }
 
     $("#cost-range").slider({
@@ -236,7 +268,6 @@ $(document).ready(function () {
           returnIdsOnly: "false"
         })
         .done(function (data) {
-          data = JSON.parse(data);
           var results = $('#results');
           results.hide();
           results.empty();
@@ -276,7 +307,6 @@ $(document).ready(function () {
         showComments(projId);
       });
       $('#commentForm').trigger("reset");
-
     }
 
   });
