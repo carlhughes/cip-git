@@ -95,7 +95,7 @@ $(document).ready(function () {
             content: popupFunction
           }
         }),
-        searchFields: ["Project_Description", "Program"],
+        searchFields: ["Project_Description", "Program", "ProjectID"],
         displayField: "Project_Description",
         exactMatch: false,
         outFields: ["*"],
@@ -116,7 +116,7 @@ $(document).ready(function () {
             content: popupFunction
           }
         }),
-        searchFields: ["Project_Description", "Program"],
+        searchFields: ["Project_Description", "Program", "ProjectID"],
         displayField: "Project_Description",
         exactMatch: false,
         outFields: ["*"],
