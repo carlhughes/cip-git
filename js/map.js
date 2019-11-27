@@ -86,7 +86,7 @@ $(document).ready(function () {
           projId = attributes.ProjectID;
           showComments(projId);
         }
-        return "<p id='popupFeatureSelected' val='" + attributes.ProjectID + "'>" + attributes.ProjectID + "</br><a href='https://hwy.massdot.state.ma.us/projectinfo/projectinfo.asp?num=" + attributes.ProjectID + "' target=blank id='pinfoLink'>Project Info Link</a></br>MassDOT Division: " + attributes.Division + "</br> Location: " + attributes.Location + "</br> Program: " + attributes.Program + "</br> Total Cost: " + attributes.Total__M + "</p> This is a " + attributes.Division + " project programmed as " + attributes.Program + ". It is located in " + attributes.Location + " and has a total cost of " + numeral(attributes.Total__M).format('$0,0[.]00') + ".</br> It also lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+        return "<p id='popupFeatureSelected' val='" + attributes.ProjectID + "'>" + attributes.ProjectID + "</br><a href='https://hwy.massdot.state.ma.us/projectinfo/projectinfo.asp?num=" + attributes.ProjectID + "' target=blank id='pinfoLink'>Project Info Link</a></br>MassDOT Division: " + attributes.Division + "</br> Location: " + attributes.Location + "</br> Program: " + attributes.Program + "</br> Total Cost: " + attributes.Total__M + "</p> This is a " + attributes.Division + " project programmed as " + attributes.Program + ". It is located in " + attributes.Location + " and has a total cost of " + numeral(attributes.Total__M).format('$0,0[.]00') + ".</br></br> It also lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
       });
     }
 
@@ -303,11 +303,24 @@ $(document).ready(function () {
       max: 100000000,
       values: [0, 100000000],
       slide: function (event, ui) {
-        $("#rangeSliderValues").html(numeral(ui.values[0]).format('$0,0[.]00') + " - " + numeral(ui.values[1]).format('$0,0[.]00'));
+        $("#minCost").val(numeral(ui.values[0]).format('0,0[.]00'));
+		$("#maxCost").val(numeral(ui.values[1]).format('0,0[.]00'));
         filterMap();
       }
     });
 
+    $(".costInput").change(function () {
+		minValue = numeral($("#minCost").val()).value();
+		maxValue = numeral($("#maxCost").val()).value();
+		if (minValue > maxValue){
+			maxValue = minValue
+		};
+        $("#minCost").val(numeral(minValue).format('0,0[.]00'));
+		$("#maxCost").val(numeral(maxValue).format('0,0[.]00'));
+		$( "#cost-range" ).slider( "values", [ minValue, maxValue ] );
+		filterMap();
+    });
+	  
 
     $(".filter").change(function () {
       filterMap();
@@ -317,8 +330,6 @@ $(document).ready(function () {
       $('#commentForm').hide()
       $('#projectList').hide();
       $('#helpContents').show();
-      console.log("SHOW HELP");
-
     });
 
     function showComments(projId) {

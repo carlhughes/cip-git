@@ -47,14 +47,18 @@
           <select class="form-control town-filter" id="mpoSelect">
             <option value="All">All</option>
           </select>
-		  <label for="mpoSpecific">Only MPO Selected</label>
- 		  <input class="form-check-input" type="checkbox" id="gridCheck1">
+		  <div class="filter mr-sm-2 filter w-100 ">
+			<input class="" type="checkbox" id="mpoSpecific">
+			<label class="form-check-label" for="mpoSpecific">
+			  MPO Selected Projects
+			</label>
+		  </div>
           <label for="programs">CIP Program</label>
           <select class="custom-select filter" id="programs" multiple>
             <option selected>All</option>
           </select>
-          <label for="amount">Cost range:</label>
-          <label for="customRange1" id="rangeSliderValues" readonly style="border:0; color:#1622AB; font-weight:bold;">$0 - $100,000,000</label>
+          <form class="form-inline"><label for="amount">Cost range: $</label><input type="text" class="form-control form-control-sm col-sm-3 costInput" id="minCost" placeholder="0" value="0"> - $<input type="text" class="form-control form-control-sm col-sm-3 costInput" id="maxCost" placeholder="100,000,000" value="100,000,000">
+			  </form>
           <div id="cost-range" 	class="filter"></div>
         </div>
         <div class="col-8 w-70 h-99">
@@ -66,12 +70,17 @@
             <div class="form-group">
               <label for="nameField">Name</label>
               <input type="text" class="form-control" id="nameField" placeholder="Optional" name="nameField">
+				              <label for="emailField">Email (Optional)</label>
+              <input type="text" class="form-control" id="emailField" placeholder="Optional" name="emailField">
+				              <label for="townField">Town (Optional)</label>
+              <input type="text" class="form-control" id="townField" placeholder="Optional" name="townField">
             </div>
             <div class="form-group">
               <label for="commentField">Comments</label>
               <textarea class="form-control" id="commentField" placeholder="Enter your comments here" name="commentField" required></textarea>
               <div class="invalid-feedback"> Please enter a comment in the textarea. </div>
             </div>
+			<button class="btn btn-primary" id="likeProject" type="submit">Like Project</button>
             <button class="btn btn-primary" id="submitComment" type="submit">Submit Comment</button>
           </form>
           <div class="w-100 h-80" id="projectList" style="display: none">
