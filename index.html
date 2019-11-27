@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script> 
 <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 <link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css"/>
 <script src="https://js.arcgis.com/4.13/"></script> 
@@ -47,11 +47,13 @@
           <select class="form-control town-filter" id="mpoSelect">
             <option value="All">All</option>
           </select>
+		  <label for="mpoSpecific">Only MPO Selected</label>
+ 		  <input class="form-check-input" type="checkbox" id="gridCheck1">
           <label for="programs">CIP Program</label>
           <select class="custom-select filter" id="programs" multiple>
             <option selected>All</option>
           </select>
-			<label for="amount">Cost range:</label>
+          <label for="amount">Cost range:</label>
           <label for="customRange1" id="rangeSliderValues" readonly style="border:0; color:#1622AB; font-weight:bold;">$0 - $100,000,000</label>
           <div id="cost-range" 	class="filter"></div>
         </div>
