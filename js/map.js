@@ -5,7 +5,7 @@ $(document).ready(function () {
     "esri/layers/FeatureLayer",
     "esri/layers/GraphicsLayer",
     "esri/tasks/Locator",
-		     "esri/views/layers/support/FeatureFilter",
+    "esri/views/layers/support/FeatureFilter",
     "esri/Graphic"
   ], function (MapView, Map, WebMap, MapImageLayer, QueryTask, Query, watchUtils, Search, FeatureLayer, GraphicsLayer, Locator, FeatureFilter, Graphic) {
     var projId;
@@ -15,32 +15,47 @@ $(document).ready(function () {
     var map = new Map({
       basemap: "topo"
     });
-	  
+
     var projectLocations = new FeatureLayer({
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/1",
-        outFields: ["*"],
-        visible: true,
-        popupEnabled: true,
-        popupTemplate: {
-          title: "{Project_Description}",
-          content: popupFunction
-        }
+      outFields: ["*"],
+      visible: true,
+      popupEnabled: true,
+      popupTemplate: {
+        title: "{Project_Description}",
+        content: popupFunction
+      }
     });
-	  
-	  
+
+
     var projectLocationsPoints = new FeatureLayer({
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/3",
-        outFields: ["*"],
-        visible: true,
-        popupEnabled: true,
-        popupTemplate: {
-          title: "{Project_Description}",
-          content: popupFunction
-        }
+      outFields: ["*"],
+      visible: true,
+      popupEnabled: true,
+      popupTemplate: {
+        title: "{Project_Description}",
+        content: popupFunction
+      }
+    });
+
+    var projectLocationsPolygons = new FeatureLayer({
+      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/4",
+      outFields: ["Project_Description"],
+      visible: false,
+      popupEnabled: true,
+      popupTemplate: {
+        title: "{Project_Description}",
+        content: popupFunction
+      }
     });
 
     var townLayer = new FeatureLayer({
       url: "https://gis.massdot.state.ma.us/arcgis/rest/services/Boundaries/Towns/MapServer/0",
+    });
+
+    var mpoLayer = new FeatureLayer({
+      url: "https://gis.massdot.state.ma.us/arcgis/rest/services/Boundaries/MPOs/MapServer/0",
     });
 
     var commentLayer = new FeatureLayer({
@@ -71,7 +86,7 @@ $(document).ready(function () {
           projId = attributes.ProjectID;
           showComments(projId);
         }
-        return "<p id='popupFeatureSelected' val='" + attributes.ProjectID + "'>" + attributes.ProjectID + "</br><a href='https://hwy.massdot.state.ma.us/projectinfo/projectinfo.asp?num=" + attributes.ProjectID + "' target=blank id='pinfoLink'>Project Info Link</a></br>MassDOT Division: " + attributes.Division + "</br> Location: " + attributes.Location + "</br> Program: " + attributes.Program + "</br> Total Cost: " + attributes.Total__M + "</p>Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+        return "<p id='popupFeatureSelected' val='" + attributes.ProjectID + "'>" + attributes.ProjectID + "</br><a href='https://hwy.massdot.state.ma.us/projectinfo/projectinfo.asp?num=" + attributes.ProjectID + "' target=blank id='pinfoLink'>Project Info Link</a></br>MassDOT Division: " + attributes.Division + "</br> Location: " + attributes.Location + "</br> Program: " + attributes.Program + "</br> Total Cost: " + attributes.Total__M + "</p>Description: This is a " + attributes.Division + " project programmed as " + attributes.Program + ". It is located in " + attributes.Location + " and has a total cost of " + numeral(attributes.Total__M).format('$0,0[.]00') + ".</br> It alsoL orem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
       });
     }
 
@@ -99,7 +114,7 @@ $(document).ready(function () {
         displayField: "Project_Description",
         exactMatch: false,
         outFields: ["*"],
-        name: "CIP Projects",
+        name: "CIP Projects (Lines)",
         placeholder: "example: Red-Blue Connector",
         maxResults: 60,
         maxSuggestions: 6,
@@ -107,7 +122,7 @@ $(document).ready(function () {
         minSuggestCharacters: 2,
         popupEnabled: true,
         autoNavigate: true
-      },{
+      }, {
         layer: new FeatureLayer({
           url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/3",
           outFields: ["*"],
@@ -120,7 +135,28 @@ $(document).ready(function () {
         displayField: "Project_Description",
         exactMatch: false,
         outFields: ["*"],
-        name: "CIP Projects",
+        name: "CIP Projects (Points)",
+        placeholder: "example: Red-Blue Connector",
+        maxResults: 60,
+        maxSuggestions: 6,
+        suggestionsEnabled: true,
+        minSuggestCharacters: 2,
+        popupEnabled: true,
+        autoNavigate: true
+      }, {
+        layer: new FeatureLayer({
+          url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/4",
+          outFields: ["*"],
+          popupTemplate: {
+            title: "{Project_Description}",
+            content: popupFunction
+          }
+        }),
+        searchFields: ["Project_Description", "Program", "ProjectID"],
+        displayField: "Project_Description",
+        exactMatch: false,
+        outFields: ["*"],
+        name: "CIP Projects (Polygons)",
         placeholder: "example: Red-Blue Connector",
         maxResults: 60,
         maxSuggestions: 6,
@@ -174,6 +210,38 @@ $(document).ready(function () {
             filterMap();
           });
       } else {
+            view.goTo({
+			  zoom: 9, // Sets zoom level based on level of detail (LOD)
+			  center: [-71.8, 42] 
+            });
+        extentForRegionOfInterest = false;
+        filterMap();
+      }
+    });
+
+
+    $("#mpoSelect").change(function () {
+      var selectedMPO = $(this).children("option:selected").val();
+      var query = mpoLayer.createQuery();
+	  console.log("Selected MPO: ", selectedMPO)
+      if (selectedMPO != "All") {
+        query.where = "MPO = '" + selectedMPO + "'";
+        query.returnGeometry = true;
+        query.outFields = ["MPO"];
+        query.outSpatialReference = view.spatialReference;
+        mpoLayer.queryFeatures(query)
+          .then(function (response) {
+            extentForRegionOfInterest = response.features[0].geometry
+            view.goTo({
+              target: response.features[0].geometry,
+            });
+            filterMap();
+          });
+      } else {
+		              view.goTo({
+			  zoom: 9, // Sets zoom level based on level of detail (LOD)
+			  center: [-71.8, 42] 
+            });
         extentForRegionOfInterest = false;
         filterMap();
       }
@@ -204,30 +272,29 @@ $(document).ready(function () {
       maxCost = $("#cost-range").slider("values", 1)
 
       sql = sql + " AND (" + divisionsSQL + ") AND (" + programsSQL + ") AND ( Total__M >= " + minCost + " AND Total__M <= " + maxCost + ")"
-		
-		
-		
+
+
       projectLocations.definitionExpression = sql;
-	  projectLocationsPoints.definitionExpression = sql;
+      projectLocationsPoints.definitionExpression = sql;
 
       queryParams = projectLocations.createQuery();
       queryParams.where = sql;
-	  if (extentForRegionOfInterest == false) {} else {
+      if (extentForRegionOfInterest == false) {} else {
         queryParams.geometry = extentForRegionOfInterest;
       }
 
       view.whenLayerView(projectLocations).then(function (layerView) {
-		  layerView.filter = new FeatureFilter({
+        layerView.filter = new FeatureFilter({
           geometry: extentForRegionOfInterest,
           spatialRelationship: "intersects",
         });
       });
       view.whenLayerView(projectLocationsPoints).then(function (layerView) {
-		  layerView.filter = new FeatureFilter({
+        layerView.filter = new FeatureFilter({
           geometry: extentForRegionOfInterest,
           spatialRelationship: "intersects",
         });
-      });	
+      });
     }
 
     $("#cost-range").slider({
@@ -236,7 +303,7 @@ $(document).ready(function () {
       max: 100000000,
       values: [0, 100000000],
       slide: function (event, ui) {
-        $("#rangeSliderValues").html("$" + ui.values[0] + " - $" + ui.values[1]);
+        $("#rangeSliderValues").html(numeral(ui.values[0]).format('$0,0[.]00') + " - " + numeral(ui.values[1]).format('$0,0[.]00'));
         filterMap();
       }
     });

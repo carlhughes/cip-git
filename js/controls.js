@@ -1,5 +1,45 @@
 $(document).ready(function () {
 
+  $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/0/query", {
+      where: "1=1",
+      outFields: "Division",
+      returnGeometry: false,
+        orderByFields: 'Division',
+        returnDistinctValues: true,
+        f: 'pjson'
+    })
+    .done(function (data) {
+      var divisions = $.parseJSON(data);
+      var divisionSelect = $('#division');
+      $(divisions.features).each(function () {
+        divisionSelect.append(
+          $('<option></option>').val(this.attributes.Division).html(this.attributes.Division)
+        );
+      });
+
+    });
+
+	
+	
+  $.post("https://gis.massdot.state.ma.us/arcgis/rest/services/Boundaries/MPOs/MapServer/0/query", {
+      where: "1=1",
+      outFields: "MPO",
+      returnGeometry: false,
+      orderByFields: 'MPO',
+      f: 'pjson'
+    })
+    .done(function (data) {
+      var mpos = $.parseJSON(data);
+      var mpoSelect = $('#mpoSelect');
+      $(mpos.features).each(function () {
+        mpoSelect.append(
+          $('<option></option>').val(this.attributes.MPO).html(this.attributes.MPO)
+        );
+      });
+
+    });
+	
+	
   $.post("https://gis.massdot.state.ma.us/arcgis/rest/services/Boundaries/Towns/MapServer/0/query", {
       where: "1=1",
       outFields: "TOWN, TOWN_ID",
@@ -20,15 +60,15 @@ $(document).ready(function () {
 
 
   function getPrograms(division) {
-	  		$('#programs')
-			.empty()
-			.append('<option selected="selected" value="All">All</option>');
+    $('#programs')
+      .empty()
+      .append('<option selected="selected" value="All">All</option>');
     $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/0/query", {
         where: "Division ='" + division + "'",
         outFields: "Program",
         returnGeometry: false,
         orderByFields: 'Program',
-		returnDistinctValues: true,
+        returnDistinctValues: true,
         f: 'pjson'
       })
       .done(function (data) {
@@ -42,10 +82,10 @@ $(document).ready(function () {
 
       });
   }
-	
-	
-	$("#division").change(function (evt) {
-		getPrograms(evt.currentTarget.value);
-    });
+
+
+  $("#division").change(function (evt) {
+    getPrograms(evt.currentTarget.value);
+  });
 
 });
