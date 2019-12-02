@@ -27,7 +27,6 @@ $(document).ready(function () {
       }
     });
 
-
     var projectLocationsPoints = new FeatureLayer({
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/3",
       outFields: ["*"],
@@ -63,17 +62,12 @@ $(document).ready(function () {
       outFields: ["*"],
     });
 
-    var resultsLayer = new GraphicsLayer();
-
     var view = new MapView({
       map: map,
       container: "viewDiv",
       zoom: 9, // Sets zoom level based on level of detail (LOD)
       center: [-71.8, 42] // Sets center point of view using longitude,latitude
     });
-
-    map.addMany([resultsLayer, projectLocations, projectLocationsPoints]);
-
 
     function popupFunction(target) {
       var query = new Query({
@@ -86,7 +80,7 @@ $(document).ready(function () {
           projId = attributes.ProjectID;
           showComments(projId);
         }
-        return "<p id='popupFeatureSelected' val='" + attributes.ProjectID + "'>" + attributes.ProjectID + "</br><a href='https://hwy.massdot.state.ma.us/projectinfo/projectinfo.asp?num=" + attributes.ProjectID + "' target=blank id='pinfoLink'>Project Info Link</a></br>MassDOT Division: " + attributes.Division + "</br> Location: " + attributes.Location + "</br> Program: " + attributes.Program + "</br> Total Cost: " + attributes.Total__M + "</p> This is a " + attributes.Division + " project programmed as " + attributes.Program + ". It is located in " + attributes.Location + " and has a total cost of " + numeral(attributes.Total__M).format('$0,0[.]00') + ".</br></br> It also lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+        return "<p id='popupFeatureSelected' val='" + attributes.ProjectID + "'>" + attributes.ProjectID + "</br><a href='https://hwy.massdot.state.ma.us/projectinfo/projectinfo.asp?num=" + attributes.ProjectID + "' target=blank id='pinfoLink'>Project Info Link</a></br>MassDOT Division: " + attributes.Division + "</br> Location: " + attributes.Location + "</br> Program: " + attributes.Program + "</br> Total Cost: " + attributes.Total__M + "</p> This is a " + attributes.Division + " project programmed as " + attributes.Program + ". It is located in " + attributes.Location + " and has a total cost of " + numeral(attributes.TotalCost).format('$0,0[.]00') + ".</br></br> It also lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
       });
     }
 
@@ -193,7 +187,6 @@ $(document).ready(function () {
       projId = false;
     });
 
-
     $("#townSelect").change(function () {
       var query = townLayer.createQuery();
       if ($("#townSelect").val() > 0) {
@@ -210,20 +203,19 @@ $(document).ready(function () {
             filterMap();
           });
       } else {
-            view.goTo({
-			  zoom: 9, // Sets zoom level based on level of detail (LOD)
-			  center: [-71.8, 42] 
-            });
+        view.goTo({
+          zoom: 9, // Sets zoom level based on level of detail (LOD)
+          center: [-71.8, 42]
+        });
         extentForRegionOfInterest = false;
         filterMap();
       }
     });
 
-
     $("#mpoSelect").change(function () {
       var selectedMPO = $(this).children("option:selected").val();
       var query = mpoLayer.createQuery();
-	  console.log("Selected MPO: ", selectedMPO)
+      console.log("Selected MPO: ", selectedMPO)
       if (selectedMPO != "All") {
         query.where = "MPO = '" + selectedMPO + "'";
         query.returnGeometry = true;
@@ -238,24 +230,20 @@ $(document).ready(function () {
             filterMap();
           });
       } else {
-		              view.goTo({
-			  zoom: 9, // Sets zoom level based on level of detail (LOD)
-			  center: [-71.8, 42] 
-            });
+        view.goTo({
+          zoom: 9, // Sets zoom level based on level of detail (LOD)
+          center: [-71.8, 42]
+        });
         extentForRegionOfInterest = false;
         filterMap();
       }
     });
 
-
     function filterMap() {
-      resultsLayer.removeAll();
+      view.map.removeAll();
       sql = "1=1"
       divisionsSQL = "(1=1)";
       programsSQL = "(1=1)";
-      minCost = 0;
-      maxCost = 100000000000;
-
       if ($("#division").val() !== "All") {
         divisionsSQL = "Division = '" + $("#division").val() + "'";
       }
@@ -270,30 +258,73 @@ $(document).ready(function () {
       }
       minCost = $("#cost-range").slider("values", 0)
       maxCost = $("#cost-range").slider("values", 1)
+      sql = sql + " AND (" + divisionsSQL + ") AND (" + programsSQL + ") AND ( TotalCost  >= " + minCost + " AND TotalCost  <= " + maxCost + ")"
 
-      sql = sql + " AND (" + divisionsSQL + ") AND (" + programsSQL + ") AND ( Total__M >= " + minCost + " AND Total__M <= " + maxCost + ")"
-
-
-      projectLocations.definitionExpression = sql;
-      projectLocationsPoints.definitionExpression = sql;
-
-      queryParams = projectLocations.createQuery();
-      queryParams.where = sql;
-      if (extentForRegionOfInterest == false) {} else {
-        queryParams.geometry = extentForRegionOfInterest;
-      }
-
-      view.whenLayerView(projectLocations).then(function (layerView) {
-        layerView.filter = new FeatureFilter({
-          geometry: extentForRegionOfInterest,
-          spatialRelationship: "intersects",
-        });
+      var pointLayerResults = new FeatureLayer({
+        popupTemplate: {
+          title: "{Project_Description}",
+          content: popupFunction
+        },
+        title: "Point Projects",
+        geometryType: "point",
+        spatialReference: {
+          wkid: 3857
+        },
+        renderer: { // overrides the layer's default renderer
+          type: "simple",
+          symbol: {
+            type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+            color: "blue",
+            size: 8,
+            outline: { // autocasts as new SimpleLineSymbol()
+              width: 0.5,
+              color: "darkblue"
+            }
+          }
+        }
       });
-      view.whenLayerView(projectLocationsPoints).then(function (layerView) {
-        layerView.filter = new FeatureFilter({
-          geometry: extentForRegionOfInterest,
-          spatialRelationship: "intersects",
-        });
+
+      var lineLayerResults = new FeatureLayer({
+        popupTemplate: {
+          title: "{Project_Description}",
+          content: popupFunction
+        },
+        title: "Line Projects",
+        geometryType: "polyline",
+        spatialReference: {
+          wkid: 3857
+        },
+        renderer: { // overrides the layer's default renderer
+          type: "simple",
+          symbol: {
+            type: "simple-line", // autocasts as SimpleLineSymbol()
+            color: [226, 119, 40],
+            width: 4
+          }
+        }
+      });
+
+
+      var queryProjects = projectLocationsPoints.createQuery();
+      if (extentForRegionOfInterest != false) {
+        queryProjects.geometry = extentForRegionOfInterest;
+        queryProjects.spatialRelationship = "intersects";
+      }
+      queryProjects.where = sql;
+      queryProjects.returnGeometry = true;
+      queryProjects.outFields = ["OBJECTID, Project_Description"];
+      queryProjects.outSpatialReference = view.spatialReference;
+
+      projectLocationsPoints.queryFeatures(queryProjects).then(function (response) {
+        pointLayerResults.source = response.features;
+        pointLayerResults.fields = response.fields;
+        view.map.add(pointLayerResults);
+      });
+
+      projectLocations.queryFeatures(queryProjects).then(function (response) {
+        lineLayerResults.source = response.features;
+        lineLayerResults.fields = response.fields;
+        view.map.add(lineLayerResults);
       });
     }
 
@@ -304,23 +335,22 @@ $(document).ready(function () {
       values: [0, 100000000],
       slide: function (event, ui) {
         $("#minCost").val(numeral(ui.values[0]).format('0,0[.]00'));
-		$("#maxCost").val(numeral(ui.values[1]).format('0,0[.]00'));
+        $("#maxCost").val(numeral(ui.values[1]).format('0,0[.]00'));
         filterMap();
       }
     });
 
     $(".costInput").change(function () {
-		minValue = numeral($("#minCost").val()).value();
-		maxValue = numeral($("#maxCost").val()).value();
-		if (minValue > maxValue){
-			maxValue = minValue
-		};
-        $("#minCost").val(numeral(minValue).format('0,0[.]00'));
-		$("#maxCost").val(numeral(maxValue).format('0,0[.]00'));
-		$( "#cost-range" ).slider( "values", [ minValue, maxValue ] );
-		filterMap();
+      minValue = numeral($("#minCost").val()).value();
+      maxValue = numeral($("#maxCost").val()).value();
+      if (minValue > maxValue) {
+        maxValue = minValue
+      };
+      $("#minCost").val(numeral(minValue).format('0,0[.]00'));
+      $("#maxCost").val(numeral(maxValue).format('0,0[.]00'));
+      $("#cost-range").slider("values", [minValue, maxValue]);
+      filterMap();
     });
-	  
 
     $(".filter").change(function () {
       filterMap();
