@@ -398,12 +398,15 @@ $(document).ready(function () {
       event.preventDefault();
       formValue = $(this).serializeArray()
       submitComment(formValue);
+      console.log(formValue);
     })
 
     function submitComment(formValue) {
       theComment = {
         "Name": formValue[0].value,
-        "Comments": formValue[1].value,
+        "Email ": formValue[1].value,
+        "Organization ": formValue[2].value,
+        "Comments": formValue[3].value,
         "Division_ID": projId
       }
       addFeature = new Graphic({
