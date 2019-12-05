@@ -6,8 +6,7 @@ $(document).ready(function () {
     "esri/tasks/Locator",
     "esri/views/layers/support/FeatureFilter",
     "esri/Graphic"
-  ], function (MapView, Map, WebMap, MapImageLayer, QueryTask, Query, watchUtils, FeatureLayer, GraphicsLayer, Locator, FeatureFilter, Graphic) {
-    var projId;
+  ], function (MapView, Map, WebMap, MapImageLayer, QueryTask, Query, watchUtils, FeatureLayer, GraphicsLayer, Locator, FeatureFilter, Graphic, comments) {
     var reset;
     var extentForRegionOfInterest = false;
 
@@ -15,7 +14,7 @@ $(document).ready(function () {
       basemap: "topo"
     });
 
-    var projectLocations = new FeatureLayer({
+    projectLocations = new FeatureLayer({
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/1",
       outFields: ["*"],
       visible: true,
@@ -26,7 +25,7 @@ $(document).ready(function () {
       }
     });
 
-    var projectLocationsPoints = new FeatureLayer({
+    projectLocationsPoints = new FeatureLayer({
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/3",
       outFields: ["*"],
       visible: true,
@@ -37,7 +36,7 @@ $(document).ready(function () {
       }
     });
 
-    var projectLocationsPolygons = new FeatureLayer({
+    projectLocationsPolygons = new FeatureLayer({
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/4",
       outFields: ["Project_Description"],
       visible: false,
@@ -48,15 +47,15 @@ $(document).ready(function () {
       }
     });
 
-    var townLayer = new FeatureLayer({
+    townLayer = new FeatureLayer({
       url: "https://gis.massdot.state.ma.us/arcgis/rest/services/Boundaries/Towns/MapServer/0",
     });
 
-    var mpoLayer = new FeatureLayer({
+    mpoLayer = new FeatureLayer({
       url: "https://gis.massdot.state.ma.us/arcgis/rest/services/Boundaries/MPOs/MapServer/0",
     });
 
-    var commentLayer = new FeatureLayer({
+    commentLayer = new FeatureLayer({
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/2",
       outFields: ["*"],
     });
@@ -67,6 +66,12 @@ $(document).ready(function () {
       zoom: 9, // Sets zoom level based on level of detail (LOD)
       center: [-71.8, 42] // Sets center point of view using longitude,latitude
     });
+
+
+    var g = document.createElement('input');
+    g.setAttribute("id", "projectSearch2");
+    g.className = 'form-control mr-sm-2 input w-100';
+
 
     function popupFunction(target) {
       var query = new Query({
@@ -87,123 +92,122 @@ $(document).ready(function () {
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/0"
     });
 
-/*    var searchWidget = new Search({
-      view: view,
-      allPlaceholder: "Search location or project (ex. Red-Blue Connector)",
-      locationEnabled: false,
-      popupEnabled: true,
-      container: "searchPlace",
-      includeDefaultSources: false,
-      sources: [{
-        layer: new FeatureLayer({
-          url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/1",
-          outFields: ["*"],
-          popupTemplate: {
-            title: "{Project_Description}",
-            content: popupFunction
-          }
-        }),
-        searchFields: ["Project_Description", "Program", "ProjectID"],
-        displayField: "Project_Description",
-        exactMatch: false,
-        outFields: ["*"],
-        name: "CIP Projects (Lines)",
-        placeholder: "example: Red-Blue Connector",
-        maxResults: 60,
-        maxSuggestions: 6,
-        suggestionsEnabled: true,
-        minSuggestCharacters: 2,
-        popupEnabled: true,
-        autoNavigate: true
-      }, {
-        layer: new FeatureLayer({
-          url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/3",
-          outFields: ["*"],
-          popupTemplate: {
-            title: "{Project_Description}",
-            content: popupFunction
-          }
-        }),
-        searchFields: ["Project_Description", "Program", "ProjectID"],
-        displayField: "Project_Description",
-        exactMatch: false,
-        outFields: ["*"],
-        name: "CIP Projects (Points)",
-        placeholder: "example: Red-Blue Connector",
-        maxResults: 60,
-        maxSuggestions: 6,
-        suggestionsEnabled: true,
-        minSuggestCharacters: 2,
-        popupEnabled: true,
-        autoNavigate: true
-      }, {
-        layer: new FeatureLayer({
-          url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/4",
-          outFields: ["*"],
-          popupTemplate: {
-            title: "{Project_Description}",
-            content: popupFunction
-          }
-        }),
-        searchFields: ["Project_Description", "Program", "ProjectID"],
-        displayField: "Project_Description",
-        exactMatch: false,
-        outFields: ["*"],
-        name: "CIP Projects (Polygons)",
-        placeholder: "example: Red-Blue Connector",
-        maxResults: 60,
-        maxSuggestions: 6,
-        suggestionsEnabled: true,
-        minSuggestCharacters: 2,
-        popupEnabled: true,
-        autoNavigate: true
-      }, {
-        locator: new Locator({
-          url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer"
-        }),
-        singleLineFieldName: "SingleLine",
-        outFields: ["Addr_type"],
-        name: "Address Search"
-      }]
-    });*/
-	  
-	  
-/*	  var searchTable =new FeatureLayer({
-          url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/0",
-          outFields: ["Project_Description", "Program", "ProjectID"],
-        })
-	  
-	  
-    var searchWidget = new Search({
-      view: view,
-      allPlaceholder: "Search location or project (ex. Red-Blue Connector)",
-      locationEnabled: false,
-      container: "searchPlace",
-      includeDefaultSources: false,
-      sources: [{
-        layer: searchTable,
-        searchFields: ["Project_Description", "Program", "ProjectID"],
-        displayField: "Project_Description",
-        exactMatch: false,
-        outFields: ["ProjectID"],
-        name: "CIP Projects (table)",
-        placeholder: "example: Red-Blue Connector",
-        maxResults: 60,
-        maxSuggestions: 6,
-        suggestionsEnabled: true,
-        minSuggestCharacters: 2,
-        popupEnabled: false,
-        autoNavigate: false
-      }]
+    /*    var searchWidget = new Search({
+          view: view,
+          allPlaceholder: "Search location or project (ex. Red-Blue Connector)",
+          locationEnabled: false,
+          popupEnabled: true,
+          container: "searchPlace",
+          includeDefaultSources: false,
+          sources: [{
+            layer: new FeatureLayer({
+              url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/1",
+              outFields: ["*"],
+              popupTemplate: {
+                title: "{Project_Description}",
+                content: popupFunction
+              }
+            }),
+            searchFields: ["Project_Description", "Program", "ProjectID"],
+            displayField: "Project_Description",
+            exactMatch: false,
+            outFields: ["*"],
+            name: "CIP Projects (Lines)",
+            placeholder: "example: Red-Blue Connector",
+            maxResults: 60,
+            maxSuggestions: 6,
+            suggestionsEnabled: true,
+            minSuggestCharacters: 2,
+            popupEnabled: true,
+            autoNavigate: true
+          }, {
+            layer: new FeatureLayer({
+              url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/3",
+              outFields: ["*"],
+              popupTemplate: {
+                title: "{Project_Description}",
+                content: popupFunction
+              }
+            }),
+            searchFields: ["Project_Description", "Program", "ProjectID"],
+            displayField: "Project_Description",
+            exactMatch: false,
+            outFields: ["*"],
+            name: "CIP Projects (Points)",
+            placeholder: "example: Red-Blue Connector",
+            maxResults: 60,
+            maxSuggestions: 6,
+            suggestionsEnabled: true,
+            minSuggestCharacters: 2,
+            popupEnabled: true,
+            autoNavigate: true
+          }, {
+            layer: new FeatureLayer({
+              url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/4",
+              outFields: ["*"],
+              popupTemplate: {
+                title: "{Project_Description}",
+                content: popupFunction
+              }
+            }),
+            searchFields: ["Project_Description", "Program", "ProjectID"],
+            displayField: "Project_Description",
+            exactMatch: false,
+            outFields: ["*"],
+            name: "CIP Projects (Polygons)",
+            placeholder: "example: Red-Blue Connector",
+            maxResults: 60,
+            maxSuggestions: 6,
+            suggestionsEnabled: true,
+            minSuggestCharacters: 2,
+            popupEnabled: true,
+            autoNavigate: true
+          }, {
+            locator: new Locator({
+              url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer"
+            }),
+            singleLineFieldName: "SingleLine",
+            outFields: ["Addr_type"],
+            name: "Address Search"
+          }]
+        });*/
+
+
+    /*	  var searchTable =new FeatureLayer({
+              url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/0",
+              outFields: ["Project_Description", "Program", "ProjectID"],
+            })
+    	  
+    	  
+        var searchWidget = new Search({
+          view: view,
+          allPlaceholder: "Search location or project (ex. Red-Blue Connector)",
+          locationEnabled: false,
+          container: "searchPlace",
+          includeDefaultSources: false,
+          sources: [{
+            layer: searchTable,
+            searchFields: ["Project_Description", "Program", "ProjectID"],
+            displayField: "Project_Description",
+            exactMatch: false,
+            outFields: ["ProjectID"],
+            name: "CIP Projects (table)",
+            placeholder: "example: Red-Blue Connector",
+            maxResults: 60,
+            maxSuggestions: 6,
+            suggestionsEnabled: true,
+            minSuggestCharacters: 2,
+            popupEnabled: false,
+            autoNavigate: false
+          }]
+        });
+    	  
+    	  searchWidget.on("select-result", function(event){
+      console.log("The selected search result: ", event);
     });
-	  
-	  searchWidget.on("select-result", function(event){
-  console.log("The selected search result: ", event);
-});
-	*/  
+    	*/
 
     view.on('click', function (event) {
-      projId;
       $('#helpContents').hide();
       $('#commentForm').hide()
       $('#projectList').hide();
@@ -222,7 +226,7 @@ $(document).ready(function () {
     });
 
     $("#townSelect").change(function () {
-		$("#mpoSelect").val("");
+      $("#mpoSelect").val("");
       var query = townLayer.createQuery();
       if ($("#townSelect").val() > 0) {
         query.where = "TOWN_ID = " + $("#townSelect").val();
@@ -248,7 +252,7 @@ $(document).ready(function () {
     });
 
     $("#mpoSelect").change(function () {
-	  $("#townSelect").val("");
+      $("#townSelect").val("");
       var selectedMPO = $(this).children("option:selected").val();
       var query = mpoLayer.createQuery();
       if (selectedMPO != "All") {
@@ -338,7 +342,6 @@ $(document).ready(function () {
           }
         }
       });
-	  
 
 
       var queryProjects = projectLocationsPoints.createQuery();
@@ -354,13 +357,13 @@ $(document).ready(function () {
       projectLocationsPoints.queryFeatures(queryProjects).then(function (response) {
         pointLayerResults.source = response.features;
         pointLayerResults.fields = response.fields;
-		view.map.add(pointLayerResults);
+        view.map.add(pointLayerResults);
       });
 
       projectLocations.queryFeatures(queryProjects).then(function (response) {
         lineLayerResults.source = response.features;
         lineLayerResults.fields = response.fields;
-		//view.map.add(lineLayerResults);
+        //view.map.add(lineLayerResults);
       });
     }
 
@@ -391,12 +394,15 @@ $(document).ready(function () {
     $(".filter").change(function () {
       filterMap();
     });
-
-    $("#aboutTool").click(function () {
-      $('#commentForm').hide()
-      $('#projectList').hide();
-      $('#helpContents').show();
+    $("#projectSearch").autocomplete("option", "select", function (event, ui) {
+      selectProject(ui.item.id);
     });
+
+    function selectProject(id) {
+		projId = id;
+		showComments(projId);
+    }
+
 
     function showComments(projId) {
       $('#helpContents').hide();
@@ -428,32 +434,6 @@ $(document).ready(function () {
           $('#projectList').show();
         });
 
-    }
-
-    $("#commentForm").submit(function (event) {
-      event.preventDefault();
-      formValue = $(this).serializeArray()
-      submitComment(formValue);
-      console.log(formValue);
-    })
-
-    function submitComment(formValue) {
-      theComment = {
-        "Name": formValue[0].value,
-        "Email ": formValue[1].value,
-        "Organization ": formValue[2].value,
-        "Comments": formValue[3].value,
-        "Division_ID": projId
-      }
-      addFeature = new Graphic({
-        attributes: theComment
-      });
-      commentLayer.applyEdits({
-        addFeatures: [addFeature],
-      }).then(function () {
-        showComments(projId);
-      });
-      $('#commentForm').trigger("reset");
     }
 
   });
