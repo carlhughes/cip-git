@@ -33,8 +33,10 @@
       <div class="row h-100 w-100">
         <div class="col w-15 h-100 sideContents" >
           <h4>Filter Projects</h4>
-          <label for="searchPlace">Project/Address Search</label>
+          <label for="searchPlace">Address Search</label>
           <div id="searchPlace" class="form-control mr-sm-2  filter w-100"></div>
+		  <label for="projectSearch">Project Search</label>
+			<input class="form-control mr-sm-2 input  filter w-100" id="projectSearch" type="text">
           <label for="division">MassDOT Division</label>
           <select class="form-control filter" id="division">
             <option>All</option>
@@ -55,7 +57,7 @@
 		  </div>
           <label for="programs">CIP Program</label>
           <select class="custom-select filter" id="programs" multiple>
-            <option selected>All</option>
+            <option value="All" division="All" selected>All</option>
           </select>
           <form class="form-inline"><label for="amount">Cost range: $</label><input type="text" class="form-control form-control-sm col-sm-3 costInput" id="minCost" placeholder="0" value="0"> - $<input type="text" class="form-control form-control-sm col-sm-3 costInput" id="maxCost" placeholder="100,000,000" value="100,000,000">
 			  </form>

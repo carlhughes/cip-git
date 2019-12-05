@@ -4,9 +4,9 @@ $(document).ready(function () {
       where: "1=1",
       outFields: "Division",
       returnGeometry: false,
-        orderByFields: 'Division',
-        returnDistinctValues: true,
-        f: 'pjson'
+      orderByFields: 'Division',
+      returnDistinctValues: true,
+      f: 'pjson'
     })
     .done(function (data) {
       var divisions = $.parseJSON(data);
@@ -19,8 +19,7 @@ $(document).ready(function () {
 
     });
 
-	
-	
+
   $.post("https://gis.massdot.state.ma.us/arcgis/rest/services/Boundaries/MPOs/MapServer/0/query", {
       where: "1=1",
       outFields: "MPO",
@@ -38,8 +37,8 @@ $(document).ready(function () {
       });
 
     });
-	
-	
+
+
   $.post("https://gis.massdot.state.ma.us/arcgis/rest/services/Boundaries/Towns/MapServer/0/query", {
       where: "1=1",
       outFields: "TOWN, TOWN_ID",
@@ -58,34 +57,42 @@ $(document).ready(function () {
 
     });
 
+  projects = [];
 
-  function getPrograms(division) {
-    $('#programs')
-      .empty()
-      .append('<option selected="selected" value="All">All</option>');
-    $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/0/query", {
-        where: "Division ='" + division + "'",
-        outFields: "Program",
-        returnGeometry: false,
-        orderByFields: 'Program',
-        returnDistinctValues: true,
-        f: 'pjson'
-      })
-      .done(function (data) {
-        var programs = $.parseJSON(data);
-        var programSelector = $('#programs');
-        $(programs.features).each(function () {
-          programSelector.append(
-            $('<option></option>').val(this.attributes.Program).html(this.attributes.Program)
-          );
-        });
-
+  $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/0/query", {
+      where: "1=1",
+      outFields: "Division, Program",
+      returnGeometry: false,
+      orderByFields: 'Program',
+      returnDistinctValues: true,
+      f: 'pjson'
+    })
+    .done(function (data) {
+      //cipPrograms = programs.features;
+      var programs = $.parseJSON(data);
+      var programSelector = $('#programs');
+      $(programs.features).each(function () {
+        projects.push(this.attributes.Program);
+        programSelector.append(
+          $('<option></option>').val(this.attributes.Program).html(this.attributes.Program).attr("division", this.attributes.Division)
+        );
       });
+
+    });
+
+
+  function getPrograms() {
+    $("#programs option").filter(function () {
+      $(this).toggle($(this).attr("division") == $('#division').val() || $(this).attr("division") == "All");
+    });
   }
 
 
-  $("#division").change(function (evt) {
-    getPrograms(evt.currentTarget.value);
-  });
+  $("#division").change(function () {
+    getPrograms();
+  })
+
+
+
 
 });

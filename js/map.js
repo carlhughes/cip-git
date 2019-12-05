@@ -1,13 +1,12 @@
 $(document).ready(function () {
 
   require(["esri/views/MapView", "esri/Map", "esri/WebMap", "esri/layers/MapImageLayer", "esri/tasks/QueryTask", "esri/tasks/support/Query", "esri/core/watchUtils",
-    "esri/widgets/Search",
     "esri/layers/FeatureLayer",
     "esri/layers/GraphicsLayer",
     "esri/tasks/Locator",
     "esri/views/layers/support/FeatureFilter",
     "esri/Graphic"
-  ], function (MapView, Map, WebMap, MapImageLayer, QueryTask, Query, watchUtils, Search, FeatureLayer, GraphicsLayer, Locator, FeatureFilter, Graphic) {
+  ], function (MapView, Map, WebMap, MapImageLayer, QueryTask, Query, watchUtils, FeatureLayer, GraphicsLayer, Locator, FeatureFilter, Graphic) {
     var projId;
     var reset;
     var extentForRegionOfInterest = false;
@@ -88,7 +87,7 @@ $(document).ready(function () {
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/0"
     });
 
-    var searchWidget = new Search({
+/*    var searchWidget = new Search({
       view: view,
       allPlaceholder: "Search location or project (ex. Red-Blue Connector)",
       locationEnabled: false,
@@ -166,14 +165,49 @@ $(document).ready(function () {
         outFields: ["Addr_type"],
         name: "Address Search"
       }]
+    });*/
+	  
+	  
+/*	  var searchTable =new FeatureLayer({
+          url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/0",
+          outFields: ["Project_Description", "Program", "ProjectID"],
+        })
+	  
+	  
+    var searchWidget = new Search({
+      view: view,
+      allPlaceholder: "Search location or project (ex. Red-Blue Connector)",
+      locationEnabled: false,
+      container: "searchPlace",
+      includeDefaultSources: false,
+      sources: [{
+        layer: searchTable,
+        searchFields: ["Project_Description", "Program", "ProjectID"],
+        displayField: "Project_Description",
+        exactMatch: false,
+        outFields: ["ProjectID"],
+        name: "CIP Projects (table)",
+        placeholder: "example: Red-Blue Connector",
+        maxResults: 60,
+        maxSuggestions: 6,
+        suggestionsEnabled: true,
+        minSuggestCharacters: 2,
+        popupEnabled: false,
+        autoNavigate: false
+      }]
     });
+	  
+	  searchWidget.on("select-result", function(event){
+  console.log("The selected search result: ", event);
+});
+	*/  
 
     view.on('click', function (event) {
       projId;
       $('#helpContents').hide();
       $('#commentForm').hide()
       $('#projectList').hide();
-      searchWidget.clear();
+      //searchWidget.clear();
     })
 
     watchUtils.watch(view.popup, "visible", function () {
@@ -188,6 +222,7 @@ $(document).ready(function () {
     });
 
     $("#townSelect").change(function () {
+		$("#mpoSelect").val("");
       var query = townLayer.createQuery();
       if ($("#townSelect").val() > 0) {
         query.where = "TOWN_ID = " + $("#townSelect").val();
@@ -213,9 +248,9 @@ $(document).ready(function () {
     });
 
     $("#mpoSelect").change(function () {
+	  $("#townSelect").val("");
       var selectedMPO = $(this).children("option:selected").val();
       var query = mpoLayer.createQuery();
-      console.log("Selected MPO: ", selectedMPO)
       if (selectedMPO != "All") {
         query.where = "MPO = '" + selectedMPO + "'";
         query.returnGeometry = true;
@@ -241,7 +276,7 @@ $(document).ready(function () {
 
     function filterMap() {
       view.map.removeAll();
-      sql = "1=1"
+      var sql = "1=1"
       divisionsSQL = "(1=1)";
       programsSQL = "(1=1)";
       if ($("#division").val() !== "All") {
@@ -303,6 +338,7 @@ $(document).ready(function () {
           }
         }
       });
+	  
 
 
       var queryProjects = projectLocationsPoints.createQuery();
@@ -312,19 +348,19 @@ $(document).ready(function () {
       }
       queryProjects.where = sql;
       queryProjects.returnGeometry = true;
-      queryProjects.outFields = ["OBJECTID, Project_Description"];
+      queryProjects.outFields = ["OBJECTID, Project_Description, ProjectID"];
       queryProjects.outSpatialReference = view.spatialReference;
 
       projectLocationsPoints.queryFeatures(queryProjects).then(function (response) {
         pointLayerResults.source = response.features;
         pointLayerResults.fields = response.fields;
-        view.map.add(pointLayerResults);
+		view.map.add(pointLayerResults);
       });
 
       projectLocations.queryFeatures(queryProjects).then(function (response) {
         lineLayerResults.source = response.features;
         lineLayerResults.fields = response.fields;
-        view.map.add(lineLayerResults);
+		//view.map.add(lineLayerResults);
       });
     }
 
