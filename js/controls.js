@@ -3,7 +3,7 @@ $(document).ready(function () {
 	searchedProject = false;
 	
 	
-  $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/0/query", {
+  $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/Projects/FeatureServer/6/query", {
       where: "1=1",
       outFields: "Division",
       returnGeometry: false,
@@ -100,7 +100,7 @@ $(document).ready(function () {
       $.ajax({
         type: "POST",
         dataType: "json",
-        url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/0/query",
+        url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/Projects/FeatureServer/6/query",
         data: {
           where: "Project_Description like '%" + request.term + "%' OR ProjectID like '%" + request.term + "%'",
           outFields: "Project_Description, ProjectID",

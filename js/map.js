@@ -74,9 +74,10 @@ $(document).ready(function () {
 
 
     function popupFunction(target) {
+		console.log(target.graphic.attributes);
       var query = new Query({
         outFields: ["*"],
-        where: "Project_Description = '" + target.graphic.attributes.Project_Description + "'"
+        where: "ProjectID = '" + target.graphic.attributes.ProjectID + "'"
       });
       return queryProjectTask.execute(query).then(function (result) {
         var attributes = result.features[0].attributes;
@@ -89,7 +90,7 @@ $(document).ready(function () {
     }
 
     var queryProjectTask = new QueryTask({
-      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/0"
+      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/Projects/FeatureServer/6"
     });
 
     /*    var searchWidget = new Search({
@@ -298,7 +299,7 @@ $(document).ready(function () {
       minCost = $("#cost-range").slider("values", 0)
       maxCost = $("#cost-range").slider("values", 1)
       sql = sql + " AND (" + divisionsSQL + ") AND (" + programsSQL + ") AND ( TotalCost  >= " + minCost + " AND TotalCost  <= " + maxCost + ")"
-
+		console.log("Filtering: ", sql);
       var pointLayerResults = new FeatureLayer({
         popupTemplate: {
           title: "{Project_Description}",
@@ -363,7 +364,7 @@ $(document).ready(function () {
       projectLocations.queryFeatures(queryProjects).then(function (response) {
         lineLayerResults.source = response.features;
         lineLayerResults.fields = response.fields;
-        //view.map.add(lineLayerResults);
+        view.map.add(lineLayerResults);
       });
     }
 
@@ -399,8 +400,8 @@ $(document).ready(function () {
     });
 
     function selectProject(id) {
-		projId = id;
-		showComments(projId);
+      projId = id;
+      showComments(projId);
     }
 
 
@@ -410,7 +411,7 @@ $(document).ready(function () {
         html = $.parseHTML(view.popup.content.viewModel.content)
         projId = $(html).attr('val');
       }
-      $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/2/query", {
+      $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/2/query", {
           where: "Division_ID = '" + projId + "'",
           outFields: "*",
           f: "json",

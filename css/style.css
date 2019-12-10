@@ -29,7 +29,7 @@ select{
 
 
   .ui-autocomplete {
-    max-height: 100px;
+    max-height: 400px;
     overflow-y: auto;
     /* prevent horizontal scrollbar */
     overflow-x: auto;
@@ -38,5 +38,5 @@ select{
    * we use height instead, but this forces the menu to always be this tall
    */
   * html .ui-autocomplete {
-    height: 100px;
+    height: 400px;
   }
