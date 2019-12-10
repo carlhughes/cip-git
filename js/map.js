@@ -74,7 +74,7 @@ $(document).ready(function () {
 
 
     function popupFunction(target) {
-		console.log(target.graphic.attributes);
+		console.log("Loading popup for: ", target.graphic.attributes);
       var query = new Query({
         outFields: ["*"],
         where: "ProjectID = '" + target.graphic.attributes.ProjectID + "'"
@@ -93,6 +93,24 @@ $(document).ready(function () {
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/Projects/FeatureServer/6"
     });
 
+var searchWidget = new Search({
+          view: view,
+          allPlaceholder: "Search location or project (ex. Red-Blue Connector)",
+          locationEnabled: false,
+          popupEnabled: true,
+          container: "searchPlace",
+          includeDefaultSources: false,
+          sources: [{
+            locator: new Locator({
+              url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer"
+            }),
+            singleLineFieldName: "SingleLine",
+            outFields: ["Addr_type"],
+            name: "Address Search"
+          }]
+        });
+	  
+	  
     /*    var searchWidget = new Search({
           view: view,
           allPlaceholder: "Search location or project (ex. Red-Blue Connector)",
