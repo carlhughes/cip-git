@@ -3,16 +3,29 @@ $(document).ready(function () {
   require(["esri/views/MapView", "esri/Map", "esri/WebMap", "esri/layers/MapImageLayer", "esri/tasks/QueryTask", "esri/tasks/support/Query", "esri/core/watchUtils",
     "esri/layers/FeatureLayer",
     "esri/layers/GraphicsLayer",
+		   "esri/layers/MapImageLayer",
     "esri/tasks/Locator",
+    "esri/widgets/Search",
     "esri/views/layers/support/FeatureFilter",
     "esri/Graphic"
-  ], function (MapView, Map, WebMap, MapImageLayer, QueryTask, Query, watchUtils, FeatureLayer, GraphicsLayer, Locator, FeatureFilter, Graphic, comments) {
+  ], function (MapView, Map, WebMap, MapImageLayer, QueryTask, Query, watchUtils, FeatureLayer, GraphicsLayer, MapImageLayer, Locator, Search, FeatureFilter, Graphic, comments) {
     var reset;
     var extentForRegionOfInterest = false;
 
+	  	         function googleTranslateElementInit() {  
+            new google.translate.TranslateElement( 
+                {pageLanguage: 'en'},  
+                'google_translate_element' 
+            );  
+        }  
+	    projectMapService = new MapImageLayer({
+    url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/"
+  });
+	  
     var map = new Map({
-      basemap: "topo"
+      basemap: "topo",
     });
+map.layers.add(projectMapService);
 
     projectLocations = new FeatureLayer({
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/1",
@@ -65,6 +78,7 @@ $(document).ready(function () {
       container: "viewDiv",
       zoom: 9, // Sets zoom level based on level of detail (LOD)
       center: [-71.8, 42] // Sets center point of view using longitude,latitude
+		
     });
 
 
@@ -74,7 +88,7 @@ $(document).ready(function () {
 
 
     function popupFunction(target) {
-		console.log("Loading popup for: ", target.graphic.attributes);
+      console.log("Loading popup for: ", target.graphic.attributes);
       var query = new Query({
         outFields: ["*"],
         where: "ProjectID = '" + target.graphic.attributes.ProjectID + "'"
@@ -93,28 +107,33 @@ $(document).ready(function () {
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/Projects/FeatureServer/6"
     });
 
-var searchWidget = new Search({
-          view: view,
-          allPlaceholder: "Search location or project (ex. Red-Blue Connector)",
-          locationEnabled: false,
-          popupEnabled: true,
-          container: "searchPlace",
-          includeDefaultSources: false,
-          sources: [{
-            locator: new Locator({
-              url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer"
-            }),
-            singleLineFieldName: "SingleLine",
-            outFields: ["Addr_type"],
-            name: "Address Search"
-          }]
-        });
+    var searchWidget = new Search({
+      view: view,
+      allPlaceholder: "Search location or project (ex. Red-Blue Connector)",
+      locationEnabled: false,
+      popupEnabled: true,
+      container: "searchPlace",
+      includeDefaultSources: false,
+      sources: [{
+        locator: new Locator({
+          url: "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer"
+        }),
+        singleLineFieldName: "SingleLine",
+        outFields: ["Addr_type"],
+        name: "Address Search"
+      }]
+    });
+
+	view.ui.add(searchWidget, {
+	  position: "top-left",
+	  index: 0
+	});
+	  
 	  
     view.on('click', function (event) {
       $('#helpContents').hide();
       $('#commentForm').hide()
       $('#projectList').hide();
-      //searchWidget.clear();
     })
 
     watchUtils.watch(view.popup, "visible", function () {
@@ -201,7 +220,7 @@ var searchWidget = new Search({
       minCost = $("#cost-range").slider("values", 0)
       maxCost = $("#cost-range").slider("values", 1)
       sql = sql + " AND (" + divisionsSQL + ") AND (" + programsSQL + ") AND ( TotalCost  >= " + minCost + " AND TotalCost  <= " + maxCost + ")"
-		console.log("Filtering: ", sql);
+      console.log("Filtering: ", sql);
       var pointLayerResults = new FeatureLayer({
         popupTemplate: {
           title: "{Project_Description}",
@@ -305,7 +324,6 @@ var searchWidget = new Search({
       projId = id;
       showComments(projId);
     }
-
 
     function showComments(projId) {
       $('#helpContents').hide();
