@@ -60,9 +60,9 @@ $(document).ready(function () {
 
     });
 
-  projects = [];
+  programList = [];
 
-  $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/0/query", {
+  $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/6/query", {
       where: "1=1",
       outFields: "Division, Program",
       returnGeometry: false,
@@ -71,11 +71,10 @@ $(document).ready(function () {
       f: 'pjson'
     })
     .done(function (data) {
-      //cipPrograms = programs.features;
       var programs = $.parseJSON(data);
       var programSelector = $('#programs');
       $(programs.features).each(function () {
-        projects.push(this.attributes.Program);
+        programList.push(this.attributes.Program);
         programSelector.append(
           $('<option></option>').val(this.attributes.Program).html(this.attributes.Program).attr("division", this.attributes.Division)
         );
@@ -91,7 +90,7 @@ $(document).ready(function () {
   }
 
 
-  $("#division").change(function () {
+  $("#division").change(function () {  
     getPrograms();
   });
 
