@@ -40,3 +40,10 @@ select{
   * html .ui-autocomplete {
     height: 400px;
   }
+
+
+.projList{
+	color:darkblue;
+	    font-size: 14px;
+    text-align: left;
+}
