@@ -2,6 +2,13 @@ $(document).ready(function () {
 
 	searchedProject = false;
 	
+	    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+          pageLanguage: 'en'
+        },
+        'google_translate_element'
+      );
+    }
 	
   $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/Projects/FeatureServer/6/query", {
       where: "1=1",
