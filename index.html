@@ -23,7 +23,7 @@
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item active"> <a class="nav-link" href="https://www.mass.gov/service-details/capital-investment-plan-cip">Go to CIP Document<span class="sr-only">(current)</span></a> </li>
+        <li class="nav-item active"> <a class="nav-link" href="https://www.mass.gov/service-details/capital-investment-plan-cip" target="_blank">Go to CIP Document<span class="sr-only">(current)</span></a> </li>
       </ul>
       <form class="form-inline my-2 my-lg-0 p-2">
         <button type="button" class="btn btn-outline-success my-2 my-sm-0 m-2" data-toggle="modal" data-target="#helpModal">About this Tool </button>
@@ -37,8 +37,6 @@
       <div class="row h-100 w-100">
         <div class="col w-15 h-100 sideContents" >
           <h4>Filter Projects</h4>
-          <label for="searchPlace">Project Search</label>
-          <div id="searchPlace3" class="form-control mr-sm-2  filter w-100"></div>
           <label for="division">MassDOT Division</label>
           <select class="form-control filter" id="division">
             <option>All</option>
@@ -140,7 +138,8 @@
 </div>
 <script type="text/javascript">
 function googleTranslateElementInit() {
-  new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+        new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'ar,es,fr,ht,it,km,ko,pl,pt,ru,vi,zh-CN', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+        document.querySelector('#google_translate_element') !== null ? document.querySelector('#google_translate_element').classList.add('has-rendered') : '';
 }
 </script>
 </body>
