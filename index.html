@@ -26,9 +26,11 @@
         <li class="nav-item active"> <a class="nav-link" href="https://www.mass.gov/service-details/capital-investment-plan-cip" target="_blank">Go to CIP Document<span class="sr-only">(current)</span></a> </li>
       </ul>
       <form class="form-inline my-2 my-lg-0 p-2">
-        <button type="button" class="btn btn-outline-success my-2 my-sm-0 m-2" data-toggle="modal" data-target="#helpModal">About this Tool </button>
-        <button type="button" class="btn btn-outline-success my-2 my-sm-0" data-toggle="modal" data-target="#helpModal">General Comment</button>
-        <div class="btn my-2 my-sm-0 m-2"><div id="google_translate_element"></div></div>
+        <button type="button" class="btn btn-outline-success my-2 my-sm-0 m-2" data-toggle="modal" data-target="#aboutTool">About this Tool</button>
+        <button type="button" class="btn btn-outline-success my-2 my-sm-0" data-toggle="modal" data-target="#generalComment">General Comment</button>
+        <div class="btn my-2 my-sm-0 m-2">
+          <div id="google_translate_element"></div>
+        </div>
       </form>
     </div>
   </nav>
@@ -66,8 +68,12 @@
           <div id="cost-range" 	class="filter"></div>
         </div>
         <div class="col-8 w-70 d-flex flex-column h-100">
-          <label for="projectSearch">Project Search</label>
-          <input class="form-control mr-sm-2 input w-100" id="projectSearch" type="text" placeholder="Search for a project. E.g. Red-Blue Connector">
+          <div class="form-group row">
+            <label for="projectSearch" class="col-sm-1 col-form-label">Project Search</label>
+            <div class="col-sm-10">
+              <input class="form-control mr-sm-2 input" id="projectSearch" type="text" placeholder="Search for a project. E.g. Red-Blue Connector">
+            </div>
+          </div>
           <div id="viewDiv" class="w-100 p-0 row justify-content-center bg-blue flex-grow-1" ></div>
         </div>
         <div class="col w-15 h-100 container-fluid">
@@ -97,7 +103,7 @@
             <h4 class="w-100 h-10">Welcome to the CIP Comment Tool and Interactive Map!</h4>
             <p>Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laboruma.</p>
             <form class="form-inline my-2 my-lg-0 p-2">
-              <button type="button" class="btn btn-primary my-2 my-sm-0" data-toggle="modal" data-target="#helpModal">Leave a General Comment</button>
+              <button type="button" class="btn btn-primary my-2 my-sm-0" data-toggle="modal" data-target="#generalComment">Leave a General Comment</button>
             </form>
           </div>
         </div>
@@ -105,7 +111,23 @@
     </main>
   </div>
 </div>
-<div class="modal fade show" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModalCenterTitle" aria-hidden="true">
+<div class="modal fade show" id="aboutTool" tabindex="-1" role="dialog" aria-labelledby="generalCommentTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="exampleModalCenterTitle">Welcome to the CIP Comment Tool and Interactive Map!</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+      </div>
+      <div class="modal-body">
+        <p>Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laboruma.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade show" id="generalComment" tabindex="-1" role="dialog" aria-labelledby="generalCommentTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">

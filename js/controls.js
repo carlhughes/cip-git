@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
-	searchedProject = false;
-		
+  searchedProject = false;
+
   $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/Projects/FeatureServer/6/query", {
       where: "1=1",
       outFields: "Division",
@@ -83,14 +83,14 @@ $(document).ready(function () {
 
 
   function getPrograms() {
-	  $("#programs").val("");
+    $("#programs").val("");
     $("#programs option").filter(function () {
       $(this).toggle($(this).attr("division") == $('#division').val() || $(this).attr("division") == "All");
     });
   }
 
 
-  $("#division").change(function () {  
+  $("#division").change(function () {
     getPrograms();
   });
 
@@ -127,11 +127,10 @@ $(document).ready(function () {
     select: function (event, ui) {
       console.log("Selected: " + ui.item.value + " aka " + ui.item.id);
       searchedProject = ui.item.id;
-		//showProject(ui.item.id);
+      //showProject(ui.item.id);
 
       //SHOW PROJECT WITH ID = ui.item.id
     }
   });
-
 
 });
