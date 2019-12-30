@@ -133,4 +133,12 @@ $(document).ready(function () {
     }
   });
 
+	
+$.getJSON( "config.json", function( json ) {
+    console.log("DONE");
+	$("#pageHelp").append("AAAAAA");
+});
+	
+	
+	
 });
