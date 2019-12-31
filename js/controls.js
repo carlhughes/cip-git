@@ -1,5 +1,4 @@
 $(document).ready(function () {
-
   searchedProject = false;
 
   $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/Projects/FeatureServer/6/query", {
@@ -78,7 +77,7 @@ $(document).ready(function () {
           $('<option></option>').val(this.attributes.Program).html(this.attributes.Program).attr("division", this.attributes.Division)
         );
       });
-
+	  getPrograms();
     });
 
 
@@ -93,52 +92,4 @@ $(document).ready(function () {
   $("#division").change(function () {
     getPrograms();
   });
-
-  $("#projectSearch").autocomplete({
-    source: function (request, response) {
-      $.ajax({
-        type: "POST",
-        dataType: "json",
-        url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/Projects/FeatureServer/6/query",
-        data: {
-          where: "Project_Description like '%" + request.term + "%' OR ProjectID like '%" + request.term + "%'",
-          outFields: "Project_Description, ProjectID",
-          returnGeometry: false,
-          orderByFields: 'Project_Description',
-          returnDistinctValues: true,
-          f: 'pjson'
-        },
-        success: function (data) {
-          const resultsArray = data.features;
-          const searchSuggestions = resultsArray.map(p => {
-            var rObj = {};
-            rObj["id"] = p.attributes.ProjectID;
-            rObj["value"] = p.attributes.Project_Description;
-            return rObj;
-          });
-          response(searchSuggestions);
-          $(".ui-autocomplete").css({
-            'width': ($("#projectSearch").width() + 'px')
-          });
-        }
-      });
-    },
-    minLength: 2,
-    select: function (event, ui) {
-      console.log("Selected: " + ui.item.value + " aka " + ui.item.id);
-      searchedProject = ui.item.id;
-      //showProject(ui.item.id);
-
-      //SHOW PROJECT WITH ID = ui.item.id
-    }
-  });
-
-	
-$.getJSON( "config.json", function( json ) {
-    console.log("DONE");
-	$("#pageHelp").append("AAAAAA");
-});
-	
-	
-	
 });

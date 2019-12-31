@@ -1,6 +1,4 @@
 $(document).ready(function () {
-
-
   require(["esri/views/MapView", "esri/Map", "esri/WebMap", "esri/layers/MapImageLayer", "esri/tasks/QueryTask", "esri/tasks/support/Query", "esri/core/watchUtils",
     "esri/layers/FeatureLayer",
     "esri/layers/GraphicsLayer",
@@ -9,6 +7,12 @@ $(document).ready(function () {
     "esri/Graphic"
   ], function (MapView, Map, WebMap, MapImageLayer, QueryTask, Query, watchUtils, FeatureLayer, GraphicsLayer, Locator, FeatureFilter, Graphic) {
 
+    commentLayer = new FeatureLayer({
+      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/2",
+      outFields: ["*"],
+    });
+	  
+	  
     function updateComments(projId) {
       $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/2/query", {
           where: "Division_ID = '" + projId + "'",
@@ -64,15 +68,30 @@ $(document).ready(function () {
       });
       commentLayer.applyEdits({
         addFeatures: [addFeature],
-      }).then(function () {
-        if (projId = '99999') {
-          $('#generalCommentForm').trigger("reset");
+      }).then(function (results) {
+        if (results.addFeatureResults[0].error == null) {
+          if (projId == '99999') {
+			$('.comment_success').show()
+            $('#generalCommentForm').trigger("reset");
+            $('#generalCommentForm').hide();
+          } else {
+			$('.project_comment_success').show()
+            updateComments(projId);
+            $('#commentForm').trigger("reset");
+          }
         } else {
-          updateComments(projId);
+          $('.general_comment_issue').show()
+			$('.project_comment_failure').show()
         }
       });
-      $('#commentForm').trigger("reset");
     }
+
+
+    $('#generalComment').on('shown.bs.modal', function () {
+      $('.comment_success').hide()
+      $('.general_comment_issue').hide()
+      $('#generalCommentForm').show();
+    })
 
   });
 });

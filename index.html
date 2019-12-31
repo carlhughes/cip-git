@@ -11,9 +11,10 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script> 
 <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 <link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css"/>
-<script src="https://js.arcgis.com/4.13/"></script> 
-<script src="js/controls.js"></script>
 <link rel="stylesheet" href="css/style.css"/>
+<script src="https://js.arcgis.com/4.13/"></script> 
+<script src="js/page_contents.js"></script> 
+<script src="js/controls.js"></script> 
 <script src="js/map.js"></script> 
 <script src="js/comments.js"></script>
 </head>
@@ -92,6 +93,8 @@
               <textarea class="form-control" id="commentField" placeholder="Enter your comments here" name="commentField" required></textarea>
               <div class="invalid-feedback"> Please enter a comment in the textarea. </div>
             </div>
+            <div class="alert alert-warning string project_comment_failure" role="alert" style="display: none" > </div>
+            <div class="alert alert-success string project_comment_success" role="alert" style="display: none" > </div>
             <button class="btn btn-primary" id="likeProject" type="submit">Like Project</button>
             <button class="btn btn-primary" id="submitComment" type="submit">Submit Comment</button>
           </form>
@@ -101,7 +104,7 @@
           </div>
           <div class="w-100 h-80 container-fluid sideContents" id="helpContents">
             <h4 class="w-100 h-10">Welcome to the CIP Comment Tool and Interactive Map!</h4>
-            <p pageString="helpText" id="pageHelp">Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laboruma.</p>
+            <p class="string page_help" id="page_help_main"></p>
             <form class="form-inline my-2 my-lg-0 p-2">
               <button type="button" class="btn btn-primary my-2 my-sm-0" data-toggle="modal" data-target="#generalComment">Leave a General Comment</button>
             </form>
@@ -111,49 +114,16 @@
     </main>
   </div>
 </div>
-<div class="modal fade show" id="aboutTool" tabindex="-1" role="dialog" aria-labelledby="aboutToolTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+<div class="modal fade show" id="aboutTool" tabindex="-1" role="dialog" aria-labelledby="aboutToolTitle" aria-hidden="true"> </div>
+<div class="modal fade show" id="generalComment" tabindex="-1" role="dialog" aria-labelledby="generalCommentTitle" aria-hidden="true"> </div>
+<div class="modal fade show" id="loading" tabindex="-1" role="dialog" aria-labelledby="loadingTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title" id="aboutToolTitle">Welcome to the CIP Comment Tool and Interactive Map!</h3>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
-      </div>
       <div class="modal-body">
-        <p>Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laboruma.</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="modal fade show" id="generalComment" tabindex="-1" role="dialog" aria-labelledby="generalCommentTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title" id="exampleModalCenterTitle">Leave a General Comment!</h3>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
-      </div>
-      <div class="modal-body">
-        <form id="generalCommentForm" class= "w-100 h-20 sideContents">
-          <div class="form-group">
-            <label for="nameFieldgen">Name</label>
-            <input type="text" class="form-control" id="nameFieldgen" placeholder="Optional" name="nameField">
-            <label for="emailFieldgen">Email (Optional)</label>
-            <input type="text" class="form-control" id="emailFieldgen" placeholder="Optional" name="emailField">
-            <label for="townFieldgen">Town/Organization (Optional)</label>
-            <input type="text" class="form-control" id="townFieldgen" placeholder="Optional" name="townField">
-          </div>
-          <div class="form-group">
-            <label for="commentFieldgen">Comments</label>
-            <textarea class="form-control" id="commentFieldgen" placeholder="Enter your comments here" name="commentField" required></textarea>
-            <div class="invalid-feedback"> Please enter a comment in the textarea. </div>
-          </div>
-          <button class="btn btn-primary" id="submitCommentgen" type="submit">Submit Comment</button>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		  <h5 class="modal-title text-center">Finding projects...</h5>
+        <div class="text-center">
+          <div class="spinner-border" role="status"> <span class="sr-only">Loading...</span> </div>
+        </div>
       </div>
     </div>
   </div>

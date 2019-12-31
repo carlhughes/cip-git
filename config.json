@@ -1,6 +1,7 @@
-{
-  "helpText": "Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laboruma.",
-  "generalCommentResponse": "hank you for your general comment. Please visit _______ to see responses.",
-  "projectCommentResponse": "Thank you for your comment. Please visit _______ to see responses.",
-  "error": "Error trying to submit comment. Please try again later.",
-}
+{"strings": {
+  "help_message": "Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laboruma.",
+  "comment_confirmed": "Thank you for your comment. Please check www.massdot.cip.gov to see our responses.",
+  "general_comment_confirmed": "Thank you for your general comment. Please check www.massdot.cip.gov to see our responses.",
+  "comment_failed": "Comment could not be saved. Please try again later or email your comment to test@dot.state.ma.us."
+},
+"settings": "false"}
