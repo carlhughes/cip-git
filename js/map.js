@@ -271,17 +271,17 @@ $(document).ready(function () {
       $('#commentForm').hide();
       $('#projectList').hide();
       if (feature) {
-		if(highlight && feature.attributes.HighlightRemove !== "false"){
-			highlight.remove();
-		}
+        if (highlight && feature.attributes.HighlightRemove !== "false") {
+          highlight.remove();
+        }
         $("#projectSearch").val("");
         if (feature.attributes.ProjectID) {
           projId = feature.attributes.ProjectID;
           showComments(projId);
         }
-      } else {
-		  highlight.remove();
-	  }
+      } else if (highlight) {
+          highlight.remove();
+        }
     });
 
     view.popup.on("trigger-action", function (event) {
@@ -500,16 +500,16 @@ $(document).ready(function () {
         var tQuery = mbtaLines.createQuery();
         tQuery.where = "Location_Filter like '%" + ui.item.mbta_loc + "%'";
         mbtaLines.queryFeatures(tQuery).then(function (result) {
-			if (highlight) {
-			highlight.remove();
-			}
-			highlight = mbtaLines.highlight(result.features);
+          if (highlight) {
+            highlight.remove();
+          }
+          highlight = mbtaLines.highlight(result.features);
           tAsset = new Graphic({
             geometry: result.features[0].geometry,
             attributes: {
               Project_Description: ui.item.value,
               ProjectID: ui.item.id,
-				HighlightRemove: "false"
+              HighlightRemove: "false"
             },
             popupTemplate: {
               title: "{Project_Description} - ({ProjectID})",
@@ -517,7 +517,7 @@ $(document).ready(function () {
             }
           });
           view.popup.open({
-			location: tAsset.geometry.extent.center,
+            location: tAsset.geometry.extent.center,
             features: [tAsset],
             highlightEnabled: true
           });
