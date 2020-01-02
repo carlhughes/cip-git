@@ -30,9 +30,9 @@
       </form>
     </div>
   </nav>
-  <div class="row container-fluid flex-fill">
-    <main class="col" style="background-color: white">
-      <div class="row h-100 w-100">
+  <div class="row container-fluid flex-fill m-0">
+    <main class="col p-0" style="background-color: white">
+      <div class="row h-100 flex-fill">
         <div class="col w-15 h-100 sideContents" >
           <h4>Filter Projects</h4>
           <label for="division">MassDOT Division</label>
@@ -73,38 +73,46 @@
           <div id="viewDiv" class="w-100 p-0 row justify-content-center bg-blue flex-grow-1" ></div>
         </div>
         <div class="col w-15 h-100 container-fluid">
-          <form id="commentForm" class= "w-100 h-20 sideContents" style="display: none">
-            <h4>Leave a Comment</h4>
-            <div class="form-group">
-              <label for="nameField">Name</label>
-              <input type="text" class="form-control" id="nameField" placeholder="Optional" name="nameField">
-              <label for="emailField">Email (Optional)</label>
-              <input type="text" class="form-control" id="emailField" placeholder="Optional" name="emailField">
-              <label for="townField">Town/Organization (Optional)</label>
-              <input type="text" class="form-control" id="townField" placeholder="Optional" name="townField">
-            </div>
-            <div class="form-group">
-              <label for="commentField">Comments</label>
-              <textarea class="form-control" id="commentField" placeholder="Enter your comments here" name="commentField" required></textarea>
-              <div class="invalid-feedback"> Please enter a comment in the textarea. </div>
-            </div>
-            <div class="alert alert-warning string project_comment_failure" role="alert" style="display: none" > </div>
-            <div class="alert alert-success string project_comment_success" role="alert" style="display: none" > </div>
-            <button class="btn btn-primary" id="likeProject" type="submit">Like Project</button>
-            <button class="btn btn-primary" id="submitComment" type="submit">Submit Comment</button>
-          </form>
-          <div class="w-100 h-80" id="projectList" style="display: none">
-            <h4 class="w-100 h-10">Comments</h4>
-            <div id="results" class="container overflow-auto w-100 h-40 row"> </div>
-            <div class="container">
-            </div>
-          </div>
-          <div class="w-100 h-80 container-fluid sideContents" id="helpContents">
+          <div class="w-100 h-100 container-fluid sideContents" id="helpContents">
             <h4 class="w-100 h-10">Welcome to the CIP Comment Tool and Interactive Map!</h4>
             <p class="string page_help" id="page_help_main"></p>
             <form class="form-inline my-2 my-lg-0 p-2">
               <button type="button" class="btn btn-primary my-2 my-sm-0" data-toggle="modal" data-target="#generalComment">Leave a General Comment</button>
             </form>
+          </div>
+          <div class="w-100 h-90" id="interactive" style="display: none">
+            <form id="commentForm" class= "w-100 sideContents" >
+              <h4>Leave a Comment</h4>
+              <div class="form-group">
+                <label for="nameField">Name</label>
+                <input type="text" class="form-control" id="nameField" placeholder="Optional" name="nameField">
+                <label for="emailField">Email (Optional)</label>
+                <input type="text" class="form-control" id="emailField" placeholder="Optional" name="emailField">
+                <label for="townField">Town/Organization (Optional)</label>
+                <input type="text" class="form-control" id="townField" placeholder="Optional" name="townField">
+              </div>
+              <div class="form-group">
+                <label for="commentField">Comments</label>
+                <textarea class="form-control" id="commentField" placeholder="Enter your comments here" name="commentField" required></textarea>
+                <div class="invalid-feedback"> Please enter a comment in the textarea. </div>
+              </div>
+              <div class="alert alert-warning string project_comment_failure" role="alert" style="display: none" > </div>
+              <div class="alert alert-success string project_comment_success" role="alert" style="display: none" > </div>
+              <button class="btn btn-primary" id="likeProject" type="submit">Like Project</button>
+              <button class="btn btn-primary" id="submitComment" type="submit">Submit Comment</button>
+            </form>
+            <div class="w-100 overflow-auto" id="projectList" >
+              <div class="container">
+                <div class="row">
+                  <div class="col overflow-auto">
+                    <div class="page-header">
+                      <h3> Comments </h3>
+                    </div>
+                    <div class="comments-list" id="results"> </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -1,49 +1,43 @@
 html, body {
-    margin: 0;
-    height: 100%;
-	width: 100%;
+  margin: 0;
+  height: 100%;
+  width: 100%;
 }
-
 .navbar-custom {
-    background-color: #14558f;
-	height: 40px;
-	color: #FFFFFF;
+  background-color: #14558f;
+  height: 40px;
+  color: #FFFFFF;
 }
-
-#mainDiv{
-    padding-right: 0px;
-    padding-left: 0px;
+#mainDiv {
+  padding-right: 0px;
+  padding-left: 0px;
 }
-
 .nav-link, .btn.my-sm-0 {
-	color: #FFFFFF;
+  color: #FFFFFF;
 }
-
-.sideContents{
-    padding-top: 15px;
+.sideContents {
+  padding-top: 15px;
 }
-
-select{
-	padding-bottom: 6px;
+select {
+  padding-bottom: 6px;
 }
-
-
-  .ui-autocomplete {
-    max-height: 400px;
-    overflow-y: auto;
-    /* prevent horizontal scrollbar */
-    overflow-x: auto;
-  }
-  /* IE 6 doesn't support max-height
+.ui-autocomplete {
+  max-height: 400px;
+  overflow-y: auto;
+  /* prevent horizontal scrollbar */
+  overflow-x: auto;
+}
+/* IE 6 doesn't support max-height
    * we use height instead, but this forces the menu to always be this tall
    */
-  * html .ui-autocomplete {
-    height: 400px;
-  }
-
-
-.projList{
-	color:darkblue;
-	    font-size: 14px;
-    text-align: left;
+* html .ui-autocomplete {
+  height: 400px;
+}
+.projList {
+  color: darkblue;
+  font-size: 14px;
+  text-align: left;
+}
+.comments-list .media {
+  border-bottom: 1px dotted #ccc;
 }

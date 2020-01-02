@@ -268,8 +268,8 @@ $(document).ready(function () {
       $('.project_comment_success').hide()
       $('.project_comment_failure').hide()
       $('#helpContents').show();
-      $('#commentForm').hide();
-      $('#projectList').hide();
+      $('#interactive').hide();
+      //$('#projectList').hide();
       if (feature) {
         if (highlight && feature.attributes.HighlightRemove !== "false") {
           highlight.remove();
@@ -492,7 +492,7 @@ $(document).ready(function () {
       projectSearchID = ui.item.id
       $('#helpContents').show();
       $('#commentForm').hide();
-      $('#projectList').hide();
+      //$('#projectList').hide();
       geom = [];
       var query = prjLocationLines.createQuery();
       query.where = "ProjectID = '" + ui.item.id + "'";
@@ -569,15 +569,15 @@ $(document).ready(function () {
           results.empty();
           if ($(data.features).length > 0) {
             $(data.features).each(function () {
-              results.append("<div class='row w-100 container-fluid'><div class='col'><div class='card col'> <div class='card-body> <h6 class='card-subtitle mb-2 text-muted'>Name: " + this.attributes.Name + "</h6> <p class='card-text text-truncate' style='max-width: 190px'>Comment: " + this.attributes.Comments + "</p></div></div></div></div>");
+              results.append("<div class='media'><div class='media-body'><h5 class='media-heading user_name'>" + this.attributes.Name + "</h5>" + this.attributes.Comments + "</div></div>");
             });
             results.show();
           } else {
             results.append("This project currently has no comments. PROJ ID: " + projId);
           }
           results.show();
-          $('#commentForm').show();
-          $('#projectList').show();
+          $('#interactive').show();
+          //$('#projectList').show();
         });
 
     }
