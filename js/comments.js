@@ -27,11 +27,11 @@ $(document).ready(function () {
           results.empty();
           if ($(data.features).length > 0) {
             $(data.features).each(function () {
-              results.append("<div class='row w-100 container-fluid'><div class='col'><div class='card col'> <div class='card-body> <h6 class='card-subtitle mb-2 text-muted'>Name: " + this.attributes.Name + "</h6> <p class='card-text text-truncate' style='max-width: 190px'>Comment: " + this.attributes.Comments + "</p></div></div></div></div>");
+              results.append("<div class='row w-100 container-fluid'><div class='col'><div class='card col'> <div class='card-body> <h6 class='card-subtitle mb-2 text-muted'>Name: " + this.attributes.Name + "</h6> <p class='card-text text-truncate' style='max-width: 190px'>Comment: " + this.attributes.Comments + "</p></div></div></div></div><div class='media'><div class='media-body'><h5 class='media-heading user_name'>Baltej Singh</h5>Wow! this is really great.</div></div>");		
             });
             results.show();
           } else {
-            results.append("This project currently has no comments. PROJ ID: " + projId);
+            results.append("This project currently has no comments111. PROJ ID: " + projId);
           }
           results.show();
           $('#commentForm').show();
