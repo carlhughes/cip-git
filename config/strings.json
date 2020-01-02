@@ -5,11 +5,5 @@
     "general_comment_confirmed": "Thank you for your general comment. Please check www.massdot.cip.gov to see our responses.",
     "comment_failed": "Comment could not be saved. Please try again later or email your comment to test@dot.state.ma.us."
   },
-  "urls": {
-    "project_table": "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/6",
-    "comment_table": "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/2",
-    "points": "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/3",
-    "lines": "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/7"
-  },
   "settings": "false"
 }

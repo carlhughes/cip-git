@@ -12,11 +12,6 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
 <link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css"/>
 <link rel="stylesheet" href="css/style.css"/>
-<script src="https://js.arcgis.com/4.13/"></script> 
-<script src="js/page_contents.js"></script> 
-<script src="js/controls.js"></script> 
-<script src="js/map.js"></script> 
-<script src="js/comments.js"></script>
 </head>
 <body>
 <div id="mainDiv" class="container-fluid h-100 w-100 d-flex flex-column">
@@ -120,7 +115,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-body">
-		  <h5 class="modal-title text-center">Finding projects...</h5>
+        <h5 class="modal-title text-center">Finding projects...</h5>
         <div class="text-center">
           <div class="spinner-border" role="status"> <span class="sr-only">Loading...</span> </div>
         </div>
@@ -133,6 +128,11 @@ function googleTranslateElementInit() {
         new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'ar,es,fr,ht,it,km,ko,pl,pt,ru,vi,zh-CN', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
         document.querySelector('#google_translate_element') !== null ? document.querySelector('#google_translate_element').classList.add('has-rendered') : '';
 }
-</script>
+</script> 
+<script src="https://js.arcgis.com/4.13/"></script> 
+<script src="js/page_contents.js"></script> 
+<script src="js/controls.js"></script>
+<script src="js/map.js"></script> 
+<script src="js/comments.js"></script>
 </body>
 </html>

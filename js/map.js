@@ -17,7 +17,7 @@ $(document).ready(function () {
     var altSql = '1=1';
     var highlight;
 
-	$("#projectSearch").autocomplete({
+    $("#projectSearch").autocomplete({
       source: function (request, response) {
         $.ajax({
           type: "POST",
@@ -25,7 +25,7 @@ $(document).ready(function () {
           url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/Projects/FeatureServer/6/query",
           data: {
             where: "(Project_Description like '%" + request.term + "%' OR ProjectID like '%" + request.term + "%' OR Location like '%" + request.term + "%') AND " + altSql,
-            outFields: "Project_Description, ProjectID",
+            outFields: "Project_Description, ProjectID, MBTA_Location",
             returnGeometry: false,
             orderByFields: 'Project_Description',
             returnDistinctValues: true,
@@ -37,6 +37,7 @@ $(document).ready(function () {
               var rObj = {};
               rObj["id"] = p.attributes.ProjectID;
               rObj["value"] = p.attributes.Project_Description;
+              rObj["mbta_loc"] = p.attributes.MBTA_Location;
               return rObj;
             });
             response(searchSuggestions);
@@ -104,9 +105,9 @@ $(document).ready(function () {
 
     projectLocationsMBTA = new FeatureLayer({
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/7",
-      outFields: ["MBTA_Location", "route_desc", "route_long_name"],
+      outFields: ["MBTA_Location", "route_desc", "route_long_name", "Location_Filter"],
       popupTemplate: {
-        title: "MBTA Projects: {MBTA_Location}",
+        title: "MBTA Route: {MBTA_Location}",
         content: popupFunctionMbtaAsset
       }
     });
@@ -135,8 +136,6 @@ $(document).ready(function () {
       });
       return queryProjectTask.execute(query).then(function (result) {
         if (result.features.length > 0) {
-          var attributes = result.features[0].attributes;
-          firstFeature = result.features[0];
           var table = ""
           $(result.features).each(function () {
             thisProject = "<p> <button class='btn info projList' id=" + this.attributes.ProjectID + ">" + this.attributes.Project_Description + " (" + this.attributes.ProjectID + ")</button></p>";
@@ -203,28 +202,9 @@ $(document).ready(function () {
       });
       return queryProjectTask.execute(query).then(function (result) {
         var attributes = result.features[0].attributes;
-        return "<p id='popupFeatureSelected' val='" + attributes.ProjectID + "'><a href='https://hwy.massdot.state.ma.us/projectinfo/projectinfo.asp?num=" + attributes.ProjectID + "' target=blank id='pinfoLink'>Project Info Link</a></br>MassDOT Division: " + attributes.Division + "</br> Location: " + attributes.Location + "</br> Program: " + attributes.Program + "</br> Total Cost: " + numeral(attributes.Total).format('$0,0[.]00') + "</p> This is a <b>" + attributes.Division + "</b> project programmed as <b>" + attributes.Program + "</b>. It is located in <b>" + attributes.Location + "</b> and has a total cost of <b>" + numeral(attributes.Total).format('$0,0[.]00') + "</b>."
+        return "<p id='popupFeatureSelected' val='" + attributes.ProjectID + "'></br>MassDOT Division: " + attributes.Division + "</br> Location: " + attributes.MBTA_Location + "</br> Program: " + attributes.Program + "</br> Total Cost: " + numeral(attributes.Total).format('$0,0[.]00') + "</p> This is a <b>" + attributes.Division + "</b> project programmed as <b>" + attributes.Program + "</b>. It has a total cost of <b>" + numeral(attributes.Total).format('$0,0[.]00') + "</b>."
       });
     }
-
-
-    map.addMany([projectLocations, projectLocationsPoints, projectLocationsMBTA]);
-
-    //These are periphery layers used for added functionality, including spatial querying and commenting
-    townLayer = new FeatureLayer({
-      url: "https://gis.massdot.state.ma.us/arcgis/rest/services/Boundaries/Towns/MapServer/0",
-    });
-
-    mpoLayer = new FeatureLayer({
-      url: "https://gis.massdot.state.ma.us/arcgis/rest/services/Boundaries/MPOs/MapServer/0",
-    });
-
-    var view = new MapView({
-      map: map,
-      container: "viewDiv",
-      zoom: 9, // Sets zoom level based on level of detail (LOD)
-      center: [-71.8, 42] // Sets center point of view using longitude,latitude
-    });
 
     $(document).on("click", ".projList", function (e) {
       switch ($(this).attr('modeType')) {
@@ -242,6 +222,24 @@ $(document).ready(function () {
         featureMenuOpen: true,
         highlightEnabled: true // selected features initially display in a list
       });
+    });
+
+    map.addMany([projectLocations, projectLocationsPoints, projectLocationsMBTA]);
+
+    //These are periphery layers used for added functionality, including spatial querying and commenting
+    townLayer = new FeatureLayer({
+      url: "https://gis.massdot.state.ma.us/arcgis/rest/services/Boundaries/Towns/MapServer/0",
+    });
+
+    mpoLayer = new FeatureLayer({
+      url: "https://gis.massdot.state.ma.us/arcgis/rest/services/Boundaries/MPOs/MapServer/0",
+    });
+
+    var view = new MapView({
+      map: map,
+      container: "viewDiv",
+      zoom: 9, // Sets zoom level based on level of detail (LOD)
+      center: [-71.8, 42] // Sets center point of view using longitude,latitude
     });
 
     var queryProjectTask = new QueryTask({
@@ -273,11 +271,17 @@ $(document).ready(function () {
       $('#commentForm').hide();
       $('#projectList').hide();
       if (feature) {
+		if(highlight && feature.attributes.HighlightRemove !== "false"){
+			highlight.remove();
+		}
+        $("#projectSearch").val("");
         if (feature.attributes.ProjectID) {
           projId = feature.attributes.ProjectID;
           showComments(projId);
         }
-      }
+      } else {
+		  highlight.remove();
+	  }
     });
 
     view.popup.on("trigger-action", function (event) {
@@ -326,10 +330,15 @@ $(document).ready(function () {
             });
             prjLocationLines.filter = queryFilter
             prjLocationPoints.filter = queryFilter
+            view.goTo(extentForRegionOfInterest);
           });
       } else {
         spatialFilter = false;
         applyFeatureViewFilters();
+        view.goTo({
+          zoom: 9, // Sets zoom level based on level of detail (LOD)
+          center: [-71.8, 42]
+        });
       }
     });
 
@@ -356,10 +365,15 @@ $(document).ready(function () {
             });
             prjLocationLines.filter = queryFilter
             prjLocationPoints.filter = queryFilter
+            view.goTo(extentForRegionOfInterest);
           });
       } else {
         spatialFilter = false;
         applyFeatureViewFilters();
+        view.goTo({
+          zoom: 9, // Sets zoom level based on level of detail (LOD)
+          center: [-71.8, 42]
+        });
       }
     });
 
@@ -482,14 +496,42 @@ $(document).ready(function () {
       geom = [];
       var query = prjLocationLines.createQuery();
       query.where = "ProjectID = '" + ui.item.id + "'";
-      prjLocationLines.queryFeatures(query).then(function (result) {
-        geom = geom.concat(result.features);
-      }).then(function () {
-        prjLocationPoints.queryFeatures(query).then(function (pts) {
-          geom = geom.concat(pts.features);
-          openPopups();
+      if (ui.item.mbta_loc !== null) {
+        var tQuery = mbtaLines.createQuery();
+        tQuery.where = "Location_Filter like '%" + ui.item.mbta_loc + "%'";
+        mbtaLines.queryFeatures(tQuery).then(function (result) {
+			if (highlight) {
+			highlight.remove();
+			}
+			highlight = mbtaLines.highlight(result.features);
+          tAsset = new Graphic({
+            geometry: result.features[0].geometry,
+            attributes: {
+              Project_Description: ui.item.value,
+              ProjectID: ui.item.id,
+				HighlightRemove: "false"
+            },
+            popupTemplate: {
+              title: "{Project_Description} - ({ProjectID})",
+              content: popupFunction
+            }
+          });
+          view.popup.open({
+			location: tAsset.geometry.extent.center,
+            features: [tAsset],
+            highlightEnabled: true
+          });
         })
-      });
+      } else {
+        prjLocationLines.queryFeatures(query).then(function (result) {
+          geom = geom.concat(result.features);
+        }).then(function () {
+          prjLocationPoints.queryFeatures(query).then(function (pts) {
+            geom = geom.concat(pts.features);
+            openPopups();
+          })
+        });
+      };
 
       function openPopups() {
         if (geom[0].geometry.type == 'point') {
@@ -502,7 +544,7 @@ $(document).ready(function () {
           features: geom,
           highlightEnabled: true
         });
-        showComments(ui.item.id);
+        view.goTo(center);
         projectSearchID = false
       }
 
