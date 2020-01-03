@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=7,IE=9">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script> 
+<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+<link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css"/>
+<link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<div class="container-fluid p-0 main_container">
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom"> <img src="images/massdot_logo.png" class="img-fluid" alt="Placeholder image"><a class="navbar-brand" href="#">CIP 2020 Comment Tool</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active"> <a class="nav-link" href="https://www.mass.gov/service-details/capital-investment-plan-cip" target="_blank">Go to CIP Document</a> </li>
+        <li class="nav-item">
+          <button class="btn btn-outline-light my-2 my-sm-0 m-1" data-toggle="modal" data-target="#aboutTool">Help</button>
+        </li>
+        <li class="nav-item">
+          <button class="btn btn-outline-light my-2 my-sm-0 m-1" data-toggle="modal" data-target="#generalComment">General Comment</button>
+        </li>
+        <li class="nav-item">
+          <div class="btn my-2 my-sm-0 m-2 btn-outline-light">
+            <div id="google_translate_element"></div>
+          </div>
+        </li>
+      </ul>
+      <form class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Project Search</button>
+      </form>
+    </div>
+  </nav>
+  <div class="row m-0 h-100">
+    <div class="col-xl-2">
+      <h4>Filter Projects</h4>
+      <label for="division">MassDOT Division</label>
+      <div class="input-group mb-3">
+        <select class="form-control filter" id="division">
+          <option>All</option>
+        </select>
+      </div>
+      <label for="townSelect">Town</label>
+      <div class="input-group mb-3">
+        <select class="form-control filter" id="townSelect">
+          <option value="0">All</option>
+        </select>
+      </div>
+      <label for="mpoSelect">MPO</label>
+      <div class="input-group mb-3">
+        <select class="form-control town-filter" id="mpoSelect">
+          <option value="All">All</option>
+        </select>
+      </div>
+      <div class="filter mr-sm-2 filter w-100 ">
+        <input class="" type="checkbox" id="mpoSpecific">
+        <label class="form-check-label" for="mpoSpecific"> MPO Selected Projects </label>
+      </div>
+      <label for="programs">CIP Program</label>
+      <div class="input-group mb-3">
+        <select class="form-control custom-select filter" id="programs" multiple>
+          <option value="All" division="All" selected>All</option>
+        </select>
+      </div>
+      <div>
+        <form class="form-inline p-2">
+          <label for="amount">Cost range: $</label>
+          <input type="text" class="form-control form-control-sm col-sm-3 costInput" id="minCost" placeholder="0" value="0">
+          - $
+          <input type="text" class="form-control form-control-sm col-sm-3 costInput" id="maxCost" placeholder="5,000,000,000" value="5,000,000,000">
+        </form>
+        <div id="cost-range" 	class="filter"></div>
+      </div>
+    </div>
+    <div class="col-xl-8 d-flex" id="viewDiv"> </div>
+    <div class="col-xl">
+      <div overflow-auto>One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of thres One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three columns One of three</div>
+    </div>
+  </div>
+</div>
+<div class="modal fade show" id="aboutTool" tabindex="-1" role="dialog" aria-labelledby="aboutToolTitle" aria-hidden="true"> </div>
+<div class="modal fade show" id="generalComment" tabindex="-1" role="dialog" aria-labelledby="generalCommentTitle" aria-hidden="true"> </div>
+<div class="modal fade show" id="loading" tabindex="-1" role="dialog" aria-labelledby="loadingTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false"></div>
+<script type="text/javascript">
+function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'ar,es,fr,ht,it,km,ko,pl,pt,ru,vi,zh-CN', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+        document.querySelector('#google_translate_element') !== null ? document.querySelector('#google_translate_element').classList.add('has-rendered') : '';
+}
+</script> 
+<script src="https://js.arcgis.com/4.13/"></script> 
+<script src="js/page_contents.js"></script> 
+<script src="js/controls.js"></script> 
+<script src="js/map.js"></script> 
+<script src="js/comments.js"></script>
+</body>
+</html>

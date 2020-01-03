@@ -5,9 +5,17 @@ html, body {
 }
 .navbar-custom {
   background-color: #14558f;
-  height: 40px;
   color: #FFFFFF;
 }
+
+.main_container{
+bottom: 0px;
+    top: 0px;
+    left: 00px;
+    position: fixed;
+}
+}
+
 #mainDiv {
   padding-right: 0px;
   padding-left: 0px;
