@@ -1,26 +1,22 @@
 html, body {
-  margin: 0;
   height: 100%;
-  width: 100%;
+}
+
+.min-100 {
+    min-height: 100%;
 }
 .navbar-custom {
   background-color: #14558f;
   color: #FFFFFF;
 }
 
-.main_container{
-bottom: 0px;
-    top: 0px;
-    left: 0px;
-    position: fixed;
-}
-
-
 .custom-column{
-bottom: 0px;
+bottom: 45px;
     top: 0px;
     left: 0px;
+	right: 0px;
     position: absolute;
+	min-height: 500px;
 }
 
 #mainDiv {

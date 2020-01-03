@@ -13,9 +13,9 @@
 <link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css"/>
 <link rel="stylesheet" href="css/style.css"/>
 </head>
-<body>
-<div class="container-fluid p-0 main_container">
-  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom"> <img src="images/massdot_logo.png" class="img-fluid" alt="Placeholder image"><a class="navbar-brand">CIP 2020 Comment Tool</a>
+<body>	
+<div class="container-fluid min-100 d-flex flex-column">
+  <nav class=" w-100 navbar navbar-expand-lg navbar-dark navbar-custom"> <img src="images/massdot_logo.png" class="img-fluid" alt="Placeholder image"><a class="navbar-brand">CIP 2020 Comment Tool</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav mr-auto">
@@ -33,12 +33,12 @@
         </li>
       </ul>
       <form class="form-inline my-2 my-lg-0">
-		  Project Search: 	&nbsp; 
+        Project Search: 	&nbsp;
         <input class="form-control mr-sm-2" type="search" id="projectSearch" placeholder="Search for a project. E.g. Red-Blue Connector" aria-label="Search" style="width: 500px">
       </form>
     </div>
   </nav>
-  <div class="row m-0 h-100 overflow-auto">
+  <div class="row m-0 p-0 flex-grow-1">
     <div class="col-xl-2">
       <h4>Filter Projects</h4>
       <label for="division">MassDOT Division</label>
@@ -73,55 +73,53 @@
         <form class="form-inline p-2">
           <label for="amount">Cost range: $</label>
           <input type="text" class="form-control form-control-sm col-sm-3 costInput" id="minCost" placeholder="0" value="0">
-          	&nbsp; - $
+          &nbsp; - $
           <input type="text" class="form-control form-control-sm col-sm-3 costInput" id="maxCost" placeholder="5,000,000,000" value="5,000,000,000">
         </form>
         <div id="cost-range" 	class="filter"></div>
       </div>
     </div>
     <div class="col-xl-8" id="viewDiv"> </div>
-    <div class="col-xl">
-      <div class="overflow-auto custom-column">
-        <div class="sideContents m-2" id="helpContents">
-          <h4 class="">Welcome to the CIP Comment Tool and Interactive Map!</h4>
-          <p class="string page_help" id="page_help_main"></p>
-          <form class="form-inline my-2 my-lg-0 p-2">
-            <button type="button" class="btn btn-primary my-2 my-sm-0" data-toggle="modal" data-target="#generalComment">Leave a General Comment</button>
+    <div class="col-xl-2">
+      <div class="sideContents m-2" id="helpContents">
+        <h4 class="">Welcome to the CIP Comment Tool and Interactive Map!</h4>
+        <p class="string page_help" id="page_help_main"></p>
+        <form class="form-inline my-2 my-lg-0 p-2">
+          <button type="button" class="btn btn-primary my-2 my-sm-0 btn-block" data-toggle="modal" data-target="#generalComment">Leave a General Comment</button>
+        </form>
+      </div>
+      <div id="interactive" class="m-2" style="display: none">
+        <div class="comment-form">
+          <form id="commentForm" class= "w-100 sideContents" >
+            <h4>Leave a Comment</h4>
+            <div class="form-group">
+              <label for="nameField">Name</label>
+              <input type="text" class="form-control" id="nameField" placeholder="Optional" name="nameField">
+              <label for="emailField">Email (Optional)</label>
+              <input type="text" class="form-control" id="emailField" placeholder="Optional" name="emailField">
+              <label for="townField">Town/Organization (Optional)</label>
+              <input type="text" class="form-control" id="townField" placeholder="Optional" name="townField">
+            </div>
+            <div class="form-group">
+              <label for="commentField">Comments</label>
+              <textarea class="form-control" id="commentField" placeholder="Enter your comments here" name="commentField" required></textarea>
+              <div class="invalid-feedback"> Please enter a comment in the textarea. </div>
+            </div>
+            <div class="alert alert-warning string project_comment_failure" role="alert" style="display: none" > </div>
+            <div class="alert alert-success string project_comment_success" role="alert" style="display: none" > </div>
+            <button class="btn btn-primary" id="likeProject" type="submit">Like Project</button>
+            <button class="btn btn-primary" id="submitComment" type="submit">Submit Comment</button>
           </form>
         </div>
-        <div id="interactive" class="m-2" style="display: none">
-          <div class="comment-form">
-            <form id="commentForm" class= "w-100 sideContents" >
-              <h4>Leave a Comment</h4>
-              <div class="form-group">
-                <label for="nameField">Name</label>
-                <input type="text" class="form-control" id="nameField" placeholder="Optional" name="nameField">
-                <label for="emailField">Email (Optional)</label>
-                <input type="text" class="form-control" id="emailField" placeholder="Optional" name="emailField">
-                <label for="townField">Town/Organization (Optional)</label>
-                <input type="text" class="form-control" id="townField" placeholder="Optional" name="townField">
-              </div>
-              <div class="form-group">
-                <label for="commentField">Comments</label>
-                <textarea class="form-control" id="commentField" placeholder="Enter your comments here" name="commentField" required></textarea>
-                <div class="invalid-feedback"> Please enter a comment in the textarea. </div>
-              </div>
-              <div class="alert alert-warning string project_comment_failure" role="alert" style="display: none" > </div>
-              <div class="alert alert-success string project_comment_success" role="alert" style="display: none" > </div>
-              <button class="btn btn-primary" id="likeProject" type="submit">Like Project</button>
-              <button class="btn btn-primary" id="submitComment" type="submit">Submit Comment</button>
-            </form>
-          </div>
-          <div class="comment-list">
-            <div class="w-100 overflow-auto" id="projectList" >
-              <div class="container">
-                <div class="row">
-                  <div class="col overflow-auto">
-                    <div class="page-header">
-                      <h3> Comments </h3>
-                    </div>
-                    <div class="comments-list" id="results"> </div>
+        <div class="comment-list overflow-auto" style="max-height: 600px;">
+          <div class="w-100" id="projectList" >
+            <div class="container">
+              <div class="row">
+                <div class="col">
+                  <div class="page-header">
+                    <h3> Comments </h3>
                   </div>
+                  <div class="comments-list" id="results"> </div>
                 </div>
               </div>
             </div>
