@@ -385,7 +385,7 @@ $(document).ready(function () {
       slide: function (event, ui) {
         $("#minCost").val(numeral(ui.values[0]).format('0,0[.]00'));
         $("#maxCost").val(numeral(ui.values[1]).format('0,0[.]00'));
-        applyAttributeFilter();
+        applyFeatureViewFilters();
       }
     });
 
@@ -398,7 +398,7 @@ $(document).ready(function () {
       $("#minCost").val(numeral(minValue).format('0,0[.]00'));
       $("#maxCost").val(numeral(maxValue).format('0,0[.]00'));
       $("#cost-range").slider("values", [minValue, maxValue]);
-      applyAttributeFilter();
+      applyFeatureViewFilters();
     });
 
     $(".filter").change(function () {

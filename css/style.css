@@ -11,9 +11,16 @@ html, body {
 .main_container{
 bottom: 0px;
     top: 0px;
-    left: 00px;
+    left: 0px;
     position: fixed;
 }
+
+
+.custom-column{
+bottom: 0px;
+    top: 0px;
+    left: 0px;
+    position: absolute;
 }
 
 #mainDiv {
@@ -48,4 +55,8 @@ select {
 }
 .comments-list .media {
   border-bottom: 1px dotted #ccc;
+}
+
+#viewDiv, .col-xl{
+	min-height: 500px;
 }
