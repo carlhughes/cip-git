@@ -101,6 +101,8 @@ $(document).ready(function () {
           projectList.applyEdits({
             updateFeatures: [projectToLike],
           }).then(function (results) {
+            $('#prjLikes').append(projectToLike.attributes.Votes + " people like this project.");
+			  $('#prjLikes').show()
           });
         });
 

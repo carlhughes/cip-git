@@ -1,6 +1,6 @@
 $(document).ready(function () {
   searchedProject = false;
-	theCurrentProject = false;
+  theCurrentProject = false;
   liked = false;
   require(["esri/views/MapView", "esri/Map", "esri/WebMap", "esri/layers/MapImageLayer", "esri/tasks/QueryTask", "esri/tasks/support/Query", "esri/core/watchUtils",
     "esri/layers/FeatureLayer",
@@ -18,7 +18,7 @@ $(document).ready(function () {
     var extentForRegionOfInterest = false;
     var altSql = '1=1';
     var highlight;
-	
+
 
     $("#projectSearch").autocomplete({
       source: function (request, response) {
@@ -123,7 +123,7 @@ $(document).ready(function () {
       });
       return queryProjectTask.execute(query).then(function (result) {
         var attributes = result.features[0].attributes;
-        return "<p id='popupFeatureSelected' val='" + attributes.ProjectID + "'><a href='https://hwy.massdot.state.ma.us/projectinfo/projectinfo.asp?num=" + attributes.ProjectID + "' target=blank id='pinfoLink'>Project Info Link</a></br>MassDOT Division: " + attributes.Division + "</br> Location: " + attributes.Location + "</br> Program: " + attributes.Program + "</br> Total Cost: " + numeral(attributes.Total).format('$0,0[.]00') + "</p> This is a <b>" + attributes.Division + "</b> project programmed as <b>" + attributes.Program + "</b>. It is located in <b>" + attributes.Location + "</b> and has a total cost of <b>" + numeral(attributes.Total).format('$0,0[.]00') + "</b>." + attributes.Votes + " people have liked this project."
+        return "<p id='popupFeatureSelected' val='" + attributes.ProjectID + "' votes='" + attributes.Votes + "'><a href='https://hwy.massdot.state.ma.us/projectinfo/projectinfo.asp?num=" + attributes.ProjectID + "' target=blank id='pinfoLink'>Project Info Link</a></br>MassDOT Division: " + attributes.Division + "</br> Location: " + attributes.Location + "</br> Program: " + attributes.Program + "</br> Total Cost: " + numeral(attributes.Total).format('$0,0[.]00') + "</p> This is a <b>" + attributes.Division + "</b> project programmed as <b>" + attributes.Program + "</b>. It is located in <b>" + attributes.Location + "</b> and has a total cost of <b>" + numeral(attributes.Total).format('$0,0[.]00') + "</b>."
       });
     }
 
@@ -266,27 +266,27 @@ $(document).ready(function () {
       position: "top-left",
       index: 0
     }]);
-	  
+
     watchUtils.watch(view.popup, "selectedFeature", function (feature) {
       $('.project_comment_success').hide()
       $('.project_comment_failure').hide()
       $('#helpContents').show();
       $('#interactive').hide();
       if (feature) {
+        theCurrentProject = feature.attributes;
         if (highlight && feature.attributes.HighlightRemove !== "false") {
           highlight.remove();
         }
         $("#projectSearch").val("");
         if (feature.attributes.ProjectID) {
           projId = feature.attributes.ProjectID;
-			theCurrentProject = feature.attributes;
           showComments(projId);
-	      liked = false;
-		  $('#likeProject').prop('disabled', false);
+          liked = false;
+          $('#likeProject').prop('disabled', false);
         }
       } else if (highlight) {
-          highlight.remove();
-        }
+        highlight.remove();
+      }
     });
 
     view.popup.on("trigger-action", function (event) {
@@ -496,8 +496,7 @@ $(document).ready(function () {
       view.popup.close();
       projectSearchID = ui.item.id
       $('#helpContents').show();
-      $('#commentForm').hide();
-      //$('#projectList').hide();
+      $('#interactive').hide();
       geom = [];
       var query = prjLocationLines.createQuery();
       query.where = "ProjectID = '" + ui.item.id + "'";
@@ -557,6 +556,8 @@ $(document).ready(function () {
 
     function showComments(projId) {
       $('#helpContents').hide();
+		$('#prjLikes').hide();
+      $('#prjLikes').empty();
       if (projId == false) {
         html = $.parseHTML(view.popup.content.viewModel.content)
         projId = $(html).attr('val');
@@ -582,7 +583,6 @@ $(document).ready(function () {
           }
           results.show();
           $('#interactive').show();
-          //$('#projectList').show();
         });
 
     }
