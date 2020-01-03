@@ -69,6 +69,7 @@ $(document).ready(function () {
       commentLayer.applyEdits({
         addFeatures: [addFeature],
       }).then(function (results) {
+		  $('#prjLikes').hide()
         if (results.addFeatureResults[0].error == null) {
           if (projId == '99999') {
             $('.comment_success').show()
