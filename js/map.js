@@ -1,5 +1,7 @@
 $(document).ready(function () {
   searchedProject = false;
+	theCurrentProject = false;
+  liked = false;
   require(["esri/views/MapView", "esri/Map", "esri/WebMap", "esri/layers/MapImageLayer", "esri/tasks/QueryTask", "esri/tasks/support/Query", "esri/core/watchUtils",
     "esri/layers/FeatureLayer",
     "esri/layers/GraphicsLayer",
@@ -16,6 +18,7 @@ $(document).ready(function () {
     var extentForRegionOfInterest = false;
     var altSql = '1=1';
     var highlight;
+	
 
     $("#projectSearch").autocomplete({
       source: function (request, response) {
@@ -60,7 +63,7 @@ $(document).ready(function () {
 
     //The following feature layers represent the projects and their locations  
     projectList = new FeatureLayer({
-      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/3",
+      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/6",
       outFields: ["*"],
       visible: true,
       popupEnabled: true,
@@ -120,7 +123,7 @@ $(document).ready(function () {
       });
       return queryProjectTask.execute(query).then(function (result) {
         var attributes = result.features[0].attributes;
-        return "<p id='popupFeatureSelected' val='" + attributes.ProjectID + "'><a href='https://hwy.massdot.state.ma.us/projectinfo/projectinfo.asp?num=" + attributes.ProjectID + "' target=blank id='pinfoLink'>Project Info Link</a></br>MassDOT Division: " + attributes.Division + "</br> Location: " + attributes.Location + "</br> Program: " + attributes.Program + "</br> Total Cost: " + numeral(attributes.Total).format('$0,0[.]00') + "</p> This is a <b>" + attributes.Division + "</b> project programmed as <b>" + attributes.Program + "</b>. It is located in <b>" + attributes.Location + "</b> and has a total cost of <b>" + numeral(attributes.Total).format('$0,0[.]00') + "</b>."
+        return "<p id='popupFeatureSelected' val='" + attributes.ProjectID + "'><a href='https://hwy.massdot.state.ma.us/projectinfo/projectinfo.asp?num=" + attributes.ProjectID + "' target=blank id='pinfoLink'>Project Info Link</a></br>MassDOT Division: " + attributes.Division + "</br> Location: " + attributes.Location + "</br> Program: " + attributes.Program + "</br> Total Cost: " + numeral(attributes.Total).format('$0,0[.]00') + "</p> This is a <b>" + attributes.Division + "</b> project programmed as <b>" + attributes.Program + "</b>. It is located in <b>" + attributes.Location + "</b> and has a total cost of <b>" + numeral(attributes.Total).format('$0,0[.]00') + "</b>." + attributes.Votes + " people have liked this project."
       });
     }
 
@@ -242,7 +245,7 @@ $(document).ready(function () {
       center: [-71.8, 42] // Sets center point of view using longitude,latitude
     });
 
-    var queryProjectTask = new QueryTask({
+    queryProjectTask = new QueryTask({
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/6"
     });
 
@@ -263,13 +266,12 @@ $(document).ready(function () {
       position: "top-left",
       index: 0
     }]);
-
+	  
     watchUtils.watch(view.popup, "selectedFeature", function (feature) {
       $('.project_comment_success').hide()
       $('.project_comment_failure').hide()
       $('#helpContents').show();
       $('#interactive').hide();
-      //$('#projectList').hide();
       if (feature) {
         if (highlight && feature.attributes.HighlightRemove !== "false") {
           highlight.remove();
@@ -277,7 +279,10 @@ $(document).ready(function () {
         $("#projectSearch").val("");
         if (feature.attributes.ProjectID) {
           projId = feature.attributes.ProjectID;
+			theCurrentProject = feature.attributes;
           showComments(projId);
+	      liked = false;
+		  $('#likeProject').prop('disabled', false);
         }
       } else if (highlight) {
           highlight.remove();

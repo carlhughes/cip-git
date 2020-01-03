@@ -11,10 +11,9 @@ $(document).ready(function () {
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/2",
       outFields: ["*"],
     });
-	  
-	  
+
     function updateComments(projId) {
-		console.log("UPDATING???");
+      console.log("UPDATING???");
       $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/2/query", {
           where: "Division_ID = '" + projId + "'",
           outFields: "*",
@@ -28,7 +27,7 @@ $(document).ready(function () {
           results.empty();
           if ($(data.features).length > 0) {
             $(data.features).each(function () {
-              results.append("<div class='media'><div class='media-body'><h5 class='media-heading user_name'>" + this.attributes.Name + "</h5>" + this.attributes.Comments + "</div></div>");	
+              results.append("<div class='media'><div class='media-body'><h5 class='media-heading user_name'>" + this.attributes.Name + "</h5>" + this.attributes.Comments + "</div></div>");
             });
             results.show();
           } else {
@@ -72,20 +71,43 @@ $(document).ready(function () {
       }).then(function (results) {
         if (results.addFeatureResults[0].error == null) {
           if (projId == '99999') {
-			$('.comment_success').show()
+            $('.comment_success').show()
             $('#generalCommentForm').trigger("reset");
             $('#generalCommentForm').hide();
           } else {
-			$('.project_comment_success').show()
+            $('.project_comment_success').show()
             updateComments(projId);
             $('#commentForm').trigger("reset");
           }
         } else {
           $('.general_comment_issue').show()
-			$('.project_comment_failure').show()
+          $('.project_comment_failure').show()
         }
       });
     }
+
+
+    $('#likeProject').on('click', function () {
+      if (liked === false) {
+        $(this).prop('disabled', true);
+        liked = true;
+        var query = new Query({
+          outFields: ["*"],
+          where: "ProjectID = '" + projId + "'"
+        });
+        queryProjectTask.execute(query).then(function (result) {
+          var projectToLike = result.features[0];
+          projectToLike.attributes.Votes = projectToLike.attributes.Votes + 1
+          projectList.applyEdits({
+            updateFeatures: [projectToLike],
+          }).then(function (results) {
+          });
+        });
+
+      } else {
+        console.log("Project already liked");
+      }
+    })
 
 
     $('#generalComment').on('shown.bs.modal', function () {
