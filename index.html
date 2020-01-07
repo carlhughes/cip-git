@@ -18,24 +18,23 @@
   <nav class=" w-100 navbar navbar-expand-lg navbar-dark navbar-custom"> <img src="images/massdot_logo.png" class="img-fluid" alt="Placeholder image"><a class="navbar-brand">CIP 2020 Comment Tool</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-        <li class="nav-item active"> <a class="nav-link" href="https://www.mass.gov/service-details/capital-investment-plan-cip" target="_blank">Go to CIP Document</a> </li>
-        <li class="nav-item">
+      <ul class="navbar-nav mr-auto flex-grow-1">
+        <li class="nav-item active m-2"> <a class="nav-link" href="https://www.mass.gov/service-details/capital-investment-plan-cip" target="_blank">Go to CIP Document</a> </li>
+        <li class="nav-item m-2">
           <button class="btn btn-outline-info my-2 my-sm-0 m-1" data-toggle="modal" data-target="#aboutTool">Help</button>
         </li>
-        <li class="nav-item">
+        <li class="nav-item m-2">
           <button class="btn btn-outline-info my-2 my-sm-0 m-1" data-toggle="modal" data-target="#generalComment">General Comment</button>
         </li>
-        <li class="nav-item">
+        <li class="nav-item m-2">
           <div class="btn my-2 my-sm-0 m-2">
             <div id="google_translate_element"></div>
           </div>
         </li>
+        <li class="nav-item form-inline m-2 flex-grow-1"> Project Search: 	&nbsp;
+          <input class="form-control mr-sm-2 flex-grow-1" type="search" id="projectSearch" placeholder="Search for a project. E.g. Red-Blue Connector" aria-label="Search">
+        </li>
       </ul>
-      <form class="form-inline my-2 my-lg-0">
-        Project Search: 	&nbsp;
-        <input class="form-control mr-sm-2" type="search" id="projectSearch" placeholder="Search for a project. E.g. Red-Blue Connector" aria-label="Search" style="width: 500px">
-      </form>
     </div>
   </nav>
   <div class="row m-0 p-0 flex-grow-1">
@@ -60,16 +59,16 @@
         </select>
       </div>
       <div class="filter mr-sm-2 filter w-100 ">
-        <input class="" type="checkbox" id="mpoSpecific">
-        <label class="form-check-label" for="mpoSpecific"> MPO Selected Projects </label>
-      </div>
-      <div class="filter mr-sm-2 filter w-100 ">
-        <input class="" type="checkbox" id="townPrjs">
+        <input class="geomCheck" type="checkbox" id="townPrjs" checked>
         <label class="form-check-label" for="townPrjs"> Town-wide projects </label>
       </div>
       <div class="filter mr-sm-2 filter w-100 ">
-        <input class="" type="checkbox" id="statewidePrjs">
-        <label class="form-check-label" for="statewidePrjs"> Statewide projects </label>
+        <input class="geomCheck" type="checkbox" id="rtaPrjs" checked>
+        <label class="form-check-label" for="rtaPrjs"> RTA-wide projects </label>
+      </div>
+      <div class="filter mr-sm-2 filter w-100 ">
+        <input class="geomCheck" type="checkbox" id="districtPrjs" checked>
+        <label class="form-check-label" for="districtPrjs"> Highway District projects </label>
       </div>
       <label for="programs">CIP Program</label>
       <div class="input-group mb-3">
@@ -79,15 +78,19 @@
       </div>
       <div>
         <label for="amount">Cost Range</label>
-        <form class="form p-2">
-          <div class="form-inline">Min: $
-            <input type="text" class="form-control form-control-sm col-sm-3 costInput" id="minCost" placeholder="0" value="0">
+        <form class="form">
+          <div class="form-inline flex-grow-1">Min:  $
+            <input type="text" class="form-control form-control-sm costInput flex-grow-1 m-2" id="minCost" placeholder="0" value="0">
           </div>
-          <div class="form-inline">Max: $
-            <input type="text" class="form-control form-control-sm col-sm-3 costInput" id="maxCost" placeholder="5,000,000,000" value="5,000,000,000">
+          <div class="form-inline ">Max:  $
+            <input type="text" class="form-control form-control-sm costInput flex-grow-1 m-2" id="maxCost" placeholder="5,000,000,000" value="5,000,000,000">
           </div>
         </form>
         <div id="cost-range" 	class="filter"></div>
+      </div>
+      <br>
+      <div class="filter mr-sm-2">
+        <p>To view town, RTA, or statewide projects which match the current filters, click on that town or RTA in the map</p>
       </div>
     </div>
     <div class="col-xl-8" id="viewDiv"> </div>

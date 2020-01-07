@@ -2,22 +2,35 @@ $(document).ready(function () {
   searchedProject = false;
   theCurrentProject = false;
   liked = false;
+  townsSql = "Town";
+  rtaSql = "RTA";
+  distSql = "Highway District";
+  polySql = "1=1";
   require(["esri/views/MapView", "esri/Map", "esri/WebMap", "esri/layers/MapImageLayer", "esri/tasks/QueryTask", "esri/tasks/support/Query", "esri/core/watchUtils",
     "esri/layers/FeatureLayer",
     "esri/layers/GraphicsLayer",
+    "esri/geometry/Extent",
+    "esri/geometry/Polygon",
     "esri/tasks/Locator",
     "esri/widgets/Search",
     "esri/widgets/Popup",
     "esri/widgets/Home",
     "esri/views/layers/support/FeatureFilter",
     "esri/Graphic"
-  ], function (MapView, Map, WebMap, MapImageLayer, QueryTask, Query, watchUtils, FeatureLayer, GraphicsLayer, Locator, Search, Popup, Home, FeatureFilter, Graphic, comments) {
+  ], function (MapView, Map, WebMap, MapImageLayer, QueryTask, Query, watchUtils, FeatureLayer, GraphicsLayer, Extent, Polygon, Locator, Search, Popup, Home, FeatureFilter, Graphic, comments) {
     var spatialFilter = false;
     var sql = "1=1"
     var projectSearchID = false;
     var extentForRegionOfInterest = false;
     var highlight;
-
+    var polySymbol = {
+      type: "simple-fill", // autocasts as new SimpleFillSymbol()
+      style: "none",
+      outline: { // autocasts as new SimpleLineSymbol()
+        color: [255, 255, 0, 1],
+        width: "2.5px"
+      }
+    }
 
     $("#projectSearch").autocomplete({
       source: function (request, response) {
@@ -25,6 +38,7 @@ $(document).ready(function () {
           type: "POST",
           dataType: "json",
           url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/Projects/FeatureServer/6/query",
+			
           data: {
             where: "(Project_Description like '%" + request.term + "%' OR ProjectID like '%" + request.term + "%' OR Location like '%" + request.term + "%') AND " + sql,
             outFields: "Project_Description, ProjectID, MBTA_Location, Location_Source",
@@ -57,7 +71,7 @@ $(document).ready(function () {
     });
 
     var map = new Map({
-      basemap: "dark-gray",
+      basemap: "gray-vector",
     });
 
     //The following feature layers represent the projects and their locations  
@@ -94,9 +108,9 @@ $(document).ready(function () {
       }
     });
 
-    projectLocationsPolygons = new MapImageLayer({
+    projectLocationsPolygons2 = new MapImageLayer({
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer",
-      sublayers: [{ // sets a definition expression on sublayer 3
+      sublayers: [{
         id: 4,
         popupEnabled: true,
         popupTemplate: {
@@ -104,6 +118,19 @@ $(document).ready(function () {
           content: "<p id='popupFeatureSelected' class='polyList' modeType='{Location}' val='{Location}'><button class='btn btn-info'>View projects in this {Location_Type}</button>"
         }
       }]
+    });
+
+    projectLocationsPolygons = new FeatureLayer({
+      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/4",
+      outFields: ["*"],
+      visible: true,
+      opacity: 0.3,
+      popupEnabled: true,
+      popupTemplate: {
+        title: "{Location_Type} - {Location}",
+        content: "<p id='popupFeatureSelected' class='polyList' modeType='{Location}' val='{Location}'><button class='btn btn-info'>View projects in this {Location_Type}</button><br>"
+          + "<p id='popupFeatureSelectedStatewide' class='polyList' modeType='Statewide' val='{Location}'><button class='btn btn-info'>View statewide projects</button>"
+      }
     });
 
     projectLocationsMBTA = new FeatureLayer({
@@ -118,7 +145,7 @@ $(document).ready(function () {
     $(document).on("click", ".polyList", function (e) {
       existingFeatures = view.popup.features;
       selectedIndex = view.popup.selectedFeatureIndex;
-      addPolyPopups($(this).attr('modeType'));
+      addPolyPopups($(this).attr('modeType'), $(this));
     });
 
     $(document).on("click", ".projList", function (e) {
@@ -141,11 +168,11 @@ $(document).ready(function () {
       });
     });
 
-    function addPolyPopups(value) {
+    function addPolyPopups(value, id) {
       polyProjects = [];
       var query = new Query({
         outFields: ["*"],
-        where: "(Location_Source = '" + value + "' OR Location_Source = 'Statewide') AND " + sql
+        where: "(Location_Source = '" + value + "') AND " + sql
       });
       queryProjectTask.execute(query).then(function (result) {
         if (result.features.length > 0) {
@@ -156,6 +183,7 @@ $(document).ready(function () {
             var thisProject = new Graphic({
               geometry: view.popup.selectedFeature.geometry,
               attributes: this.attributes,
+              symbol: polySymbol,
               popupTemplate: {
                 title: "{Project_Description}",
                 content: popupFunction,
@@ -173,7 +201,7 @@ $(document).ready(function () {
             highlightEnabled: true // selected features initially display in a list
           });
         } else {
-          $("#popupFeatureSelected").html("No projects currently match your search criteria in " + $("#popupFeatureSelected").attr('modeType'));
+          $(id).html("No " + value + "projects currently match your search criteria.");
         }
       });
 
@@ -211,7 +239,7 @@ $(document).ready(function () {
               geometry: view.popup.selectedFeature.geometry,
               attributes: this.attributes,
               symbol: {
-                type: "simple-line", // autocasts as SimpleLineSymbol()
+                type: "simple-line",
                 color: [226, 119, 40],
                 width: 10
               },
@@ -220,7 +248,8 @@ $(document).ready(function () {
                 content: popupFunction,
                 actions: [{
                   id: "back",
-                  title: "Go back"
+                  title: "Go back",
+					className: "esri-icon-undo"
                 }]
               }
             });
@@ -259,14 +288,26 @@ $(document).ready(function () {
 
     map.addMany([projectLocationsPolygons, projectLocations, projectLocationsPoints, projectLocationsMBTA]);
 
+    const statewidePolygon = new Polygon({
+      rings: [
+        [ // first ring
+          [-73, 41],
+          [-73, 43],
+          [-70.5, 43],
+          [-70.5, 41] // same as first vertex
+        ]
+      ],
+      spatialReference: {
+        wkid: 4326
+      }
+    });
+
     var view = new MapView({
       map: map,
       container: "viewDiv",
-      zoom: 8, // Sets zoom level based on level of detail (LOD)
-      center: [-71.8, 42] // Sets center point of view using longitude,latitude
     });
+    view.goTo(statewidePolygon);
 
-    //These are the feature layer views of the project locations
     view.whenLayerView(projectLocations)
       .then(function (layerView) {
         prjLocationLines = layerView
@@ -291,6 +332,16 @@ $(document).ready(function () {
       })
       .catch(function (error) {});
 
+    view.whenLayerView(projectLocationsPolygons)
+      .then(function (layerView) {
+        prjLocationPolygons = layerView
+      })
+      .catch(function (error) {});
+
+
+    projectLocationsPolygons.when(function () {
+      //prjLocationPolygons = projectLocationsPolygons.findSublayerById(4);
+    })
 
     var searchWidget = new Search({
       view: view
@@ -330,7 +381,7 @@ $(document).ready(function () {
         }
       } else if (highlight) {
         highlight.remove();
-      }
+      } else {}
     });
 
     function showComments(projId) {
@@ -358,7 +409,7 @@ $(document).ready(function () {
             });
             results.show();
           } else {
-            results.append("This project currently has no comments. PROJ ID: " + projId);
+            results.append("This project currently has no comments.");
           }
           results.show();
           $('#interactive').show();
@@ -416,10 +467,7 @@ $(document).ready(function () {
       } else {
         spatialFilter = false;
         applyFeatureViewFilters();
-        view.goTo({
-          zoom: 9, // Sets zoom level based on level of detail (LOD)
-          center: [-71.8, 42]
-        });
+        view.goTo(statewidePolygon);
       }
     });
 
@@ -451,10 +499,7 @@ $(document).ready(function () {
       } else {
         spatialFilter = false;
         applyFeatureViewFilters();
-        view.goTo({
-          zoom: 9, // Sets zoom level based on level of detail (LOD)
-          center: [-71.8, 42]
-        });
+        view.goTo(statewidePolygon);
       }
     });
 
@@ -484,6 +529,34 @@ $(document).ready(function () {
 
     $(".filter").change(function () {
       applyFeatureViewFilters();
+    });
+
+    
+	$(".geomCheck").change(function (e) {
+      console.log(e.target.id, e.target.id === "townPrjs");
+      if (e.target.checked == false && e.target.id === "townPrjs") {
+        townsSql = "0"
+      } else if (e.target.checked == true && e.target.id === "townPrjs") {
+        townsSql = "Town"
+      }
+      if (e.target.checked == false && e.target.id === "rtaPrjs") {
+        rtaSql = "0"
+      } else if (e.target.checked == true && e.target.id === "rtaPrjs") {
+        rtaSql = "RTA"
+      }
+
+      if (e.target.checked == false && e.target.id === "districtPrjs") {
+        distSql = "0"
+      } else if (e.target.checked == true && e.target.id === "districtPrjs") {
+        distSql = "Highway District"
+      }
+      polySql = "(Location_Type = '" + townsSql + "') OR (Location_Type = '" + rtaSql + "') OR (Location_Type = '" + distSql + "')"
+      console.log(polySql);
+      polySqlFilter = new FeatureFilter({
+        where: polySql,
+      });
+      prjLocationPolygons.filter = polySqlFilter
+
     });
 
     var hideLoad = false;
@@ -546,6 +619,7 @@ $(document).ready(function () {
 
     $("#projectSearch").autocomplete("option", "select", function (event, ui) {
       view.popup.close();
+      view.graphics.removeAll();
       projectSearchID = ui.item.id
       $('#helpContents').show();
       $('#interactive').hide();
@@ -561,7 +635,7 @@ $(document).ready(function () {
           break;
         case 'LINE':
           prjLocationLines.queryFeatures(query).then(function (result) {
-			geom = geom.concat(result.features);
+            geom = geom.concat(result.features);
             openPopups();
           })
           break;
@@ -597,6 +671,32 @@ $(document).ready(function () {
           break;
         default:
           console.log(ui.item.loc_source);
+          var pQuery = prjLocationPolygons.createQuery();
+          pQuery.where = "Location like '%" + ui.item.loc_source + "%'";
+          prjLocationPolygons.queryFeatures(pQuery).then(function (result) {
+            if (highlight) {
+              highlight.remove();
+            }
+            highlight = prjLocationPolygons.highlight(result.features);
+            polyProjectResult = new Graphic({
+              geometry: result.features[0].geometry,
+              symbol: polySymbol,
+              attributes: {
+                Project_Description: ui.item.value,
+                ProjectID: ui.item.id,
+                HighlightRemove: "false"
+              },
+              popupTemplate: {
+                title: "{Project_Description} - ({ProjectID})",
+                content: popupFunction
+              }
+            });
+            view.popup.open({
+              location: polyProjectResult.geometry.extent.center,
+              features: [polyProjectResult],
+              highlightEnabled: true
+            });
+          })
       }
 
       function openPopups() {
