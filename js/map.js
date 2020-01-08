@@ -592,8 +592,6 @@ $(document).ready(function () {
       } else {
         applyFeatureViewFilters();
       }
-
-
     });
 
 
@@ -632,6 +630,7 @@ $(document).ready(function () {
     //This function applies FeatureFilters to the layers in the map
     function applyFeatureViewFilters() {
       view.popup.close();
+		view.graphics.removeAll();
       sql = "1=1"
       divisionsSQL = "(1=1)";
       programsSQL = "(1=1)";
