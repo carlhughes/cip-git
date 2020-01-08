@@ -56,3 +56,11 @@ select {
 #viewDiv, .col-xl{
 	min-height: 500px;
 }
+
+.popup-link{
+	color: blue;
+}
+
+.esri-legend__layer-caption {
+display: none;
+}

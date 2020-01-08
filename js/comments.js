@@ -13,7 +13,6 @@ $(document).ready(function () {
     });
 
     function updateComments(projId) {
-      console.log("UPDATING???");
       $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/2/query", {
           where: "Division_ID = '" + projId + "'",
           outFields: "*",
@@ -58,8 +57,8 @@ $(document).ready(function () {
     function submitComment(formValue) {
       theComment = {
         "Name": formValue[0].value,
-        "Email ": formValue[1].value,
-        "Organization ": formValue[2].value,
+        "Email": formValue[1].value,
+        "Organization": formValue[2].value,
         "Comments": formValue[3].value,
         "Division_ID": projId
       }
