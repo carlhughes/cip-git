@@ -59,6 +59,7 @@ $(document).ready(function () {
               return rObj;
             });
             response(searchSuggestions);
+            view.popup.close();
             $(".ui-autocomplete").css({
               'width': ($("#projectSearch").width() + 'px')
             });
@@ -115,6 +116,7 @@ $(document).ready(function () {
       url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer",
       sublayers: [{
         id: 4,
+        opacity: 0.3,
         popupEnabled: true,
         popupTemplate: {
           title: "{Location_Type} - {Location}",
@@ -302,7 +304,7 @@ $(document).ready(function () {
 
     map.addMany([projectLocationsPolygons2, projectLocations, projectLocationsPoints, projectLocationsMBTA]);
 
-    const statewidePolygon = new Polygon({
+    statewidePolygon = new Polygon({
       rings: [
         [ // first ring
           [-73, 41],
@@ -328,14 +330,12 @@ $(document).ready(function () {
 
     // Example: Listen to the click event on the view
     view.watch("updating", function (event) {
-      if (event == false && scaleChanged == true) {
-      }
+      if (event == false && scaleChanged == true) {}
     });
 
     var scaleChanged;
     // Divides the view.scale three times
-    view.watch("scale", function (newValue, oldValue) {
-    });
+    view.watch("scale", function (newValue, oldValue) {});
 
     view.whenLayerView(projectLocations)
       .then(function (layerView) {
@@ -405,6 +405,12 @@ $(document).ready(function () {
     popupSelected = new Graphic({
       symbol: polySymbol
     });
+
+    statewideSelected = new Graphic({
+      symbol: polySymbol,
+      //geometry: statewidePolygon
+    });
+
     watchUtils.watch(view.popup, "selectedFeature", function (feature) {
       $('.project_comment_success').hide()
       $('.project_comment_failure').hide()
@@ -423,16 +429,13 @@ $(document).ready(function () {
           $('#likeProject').prop('disabled', false);
         }
 
-        if (feature.attributes.Location_Type == "Town" || feature.attributes.Location_Type == "RTA" || feature.attributes.Location_Type == "Highway District") {
+        if (feature.attributes.Location_Type == "Town" || feature.attributes.Location_Type == "RTA" || feature.attributes.Location_Type == "Highway District" || feature.attributes.Location_Type == "Statewide") {
           popupSelected.geometry = feature.geometry;
           view.graphics.add(popupSelected);
-          //view.goTo(popupSelected.geometry)
         } else {
           popupSelected.geometry = null;
           view.graphics.remove(popupSelected);
         }
-
-
       } else if (highlight) {
         highlight.remove();
         popupSelected.geometry = null;
@@ -630,7 +633,7 @@ $(document).ready(function () {
     //This function applies FeatureFilters to the layers in the map
     function applyFeatureViewFilters() {
       view.popup.close();
-		view.graphics.removeAll();
+      view.graphics.removeAll();
       sql = "1=1"
       divisionsSQL = "(1=1)";
       programsSQL = "(1=1)";
@@ -647,7 +650,7 @@ $(document).ready(function () {
         });
       }
       sql = sql + " AND (" + divisionsSQL + ") AND (" + programsSQL + ") AND ( Total  >= " + parseFloat($("#minCost").val().replace(/,/g, '')) + " AND Total <= " + parseFloat($("#maxCost").val().replace(/,/g, '')) + ")"
-		prjLocationPolygons.definitionExpression = polySql;
+      prjLocationPolygons.definitionExpression = polySql;
       if ($("#division").val() == "All") {
         mbtaLines.visible = true;
         prjLocationPolygons.visible = true;
@@ -684,8 +687,11 @@ $(document).ready(function () {
     }
 
     $("#projectSearch").autocomplete("option", "select", function (event, ui) {
+      view.popup.clear();
       view.popup.close();
       view.graphics.removeAll();
+      popupSelected.attributes = null;
+      popupSelected.geometry = null;
       projectSearchID = ui.item.id
       $('#helpContents').show();
       $('#interactive').hide();
@@ -734,7 +740,24 @@ $(document).ready(function () {
           })
           break;
         case 'Statewide':
-          console.log("STATEWIDE");
+          if (highlight) {
+            highlight.remove();
+          }
+          statewideSelected.popupTemplate = {
+            title: "{Project_Description} - ({ProjectID})",
+            content: popupFunction
+          };
+          statewideSelected.attributes = {
+            Project_Description: ui.item.value,
+            ProjectID: ui.item.id,
+            HighlightRemove: "false"
+          }
+          view.popup.open({
+            location: statewidePolygon.extent.center,
+            features: [statewideSelected],
+            highlightEnabled: true
+          });
+          projectSearchID = false
           break;
         default:
           var pQuery = prjLocationPolygons.createQuery();
@@ -753,14 +776,19 @@ $(document).ready(function () {
               ProjectID: ui.item.id,
               HighlightRemove: "false"
             }
-            view.graphics.add(popupSelected);
-            view.popup.open({
-              location: popupSelected.geometry.extent.center,
-              features: [popupSelected],
-              highlightEnabled: true
-            });
+            openPolyPopup(popupSelected)
             projectSearchID = false
           })
+      }
+
+      function openPolyPopup(popupSelected) {
+        console.log(popupSelected, view.popup);
+        view.graphics.add(popupSelected);
+        view.popup.open({
+          location: popupSelected.geometry.extent.center,
+          features: [popupSelected],
+          highlightEnabled: true
+        });
       }
 
       function openPopups() {
