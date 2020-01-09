@@ -49,7 +49,6 @@ $(document).ready(function () {
     $("#generalCommentForm").submit(function (event) {
       event.preventDefault();
       formValue = $(this).serializeArray()
-      console.log(formValue)
       projId = '99999'
       submitComment(formValue);
     })

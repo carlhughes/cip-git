@@ -4,7 +4,7 @@
     "comment_table": "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/2",
     "points": "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/3",
     "lines": "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/7",
-    "MPOs": "https://gis.massdot.state.ma.us/arcgis/rest/services/Boundaries/MPOs/MapServer/0",
+    "MPOs": "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/4",
     "Towns": "https://gis.massdot.state.ma.us/arcgis/rest/services/Boundaries/Towns/MapServer/0"
   }
 }

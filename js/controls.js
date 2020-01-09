@@ -21,12 +21,11 @@ $(document).ready(function () {
 
         });
 
-
       $.post(url.MPOs + "/query", {
-          where: "1=1",
-          outFields: "MPO",
+          where: "Location_Type = 'MPO'",
+          outFields: "Location",
           returnGeometry: false,
-          orderByFields: 'MPO',
+          orderByFields: 'Location',
           f: 'pjson'
         })
         .done(function (data) {
@@ -34,7 +33,7 @@ $(document).ready(function () {
           var mpoSelect = $('#mpoSelect');
           $(mpos.features).each(function () {
             mpoSelect.append(
-              $('<option></option>').val(this.attributes.MPO).html(this.attributes.MPO)
+              $('<option></option>').val(this.attributes.Location).html(this.attributes.Location)
             );
           });
 

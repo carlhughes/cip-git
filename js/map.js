@@ -209,7 +209,7 @@ $(document).ready(function () {
             highlightEnabled: true // selected features initially display in a list
           });
         } else {
-          $(id).html("No " + value + "projects currently match your search criteria.");
+          $(id).html("No " + value + " projects currently match your search criteria.");
         }
       });
 
@@ -330,7 +330,11 @@ $(document).ready(function () {
 
     // Example: Listen to the click event on the view
     view.watch("updating", function (event) {
-      if (event == false && scaleChanged == true) {}
+      if (event == true) {
+
+      } else if (event == false) {
+        $('#loading').modal('hide')
+      }
     });
 
     var scaleChanged;
@@ -497,7 +501,7 @@ $(document).ready(function () {
       url: "https://gis.massdot.state.ma.us/arcgis/rest/services/Boundaries/Towns/MapServer/0",
     });
     mpoLayer = new FeatureLayer({
-      url: "https://gis.massdot.state.ma.us/arcgis/rest/services/Boundaries/MPOs/MapServer/0",
+      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/4",
     });
     var townQuery = townLayer.createQuery();
     var mpoQuery = mpoLayer.createQuery();
@@ -539,9 +543,9 @@ $(document).ready(function () {
       if (selectedMPO != "All") {
         $('#loading').modal('show')
         hideLoad = false;
-        mpoQuery.where = "MPO like '%" + selectedMPO + "%'";
+        mpoQuery.where = "Location like '%" + selectedMPO + "%' and Location_Type = 'MPO'";
         mpoQuery.returnGeometry = true;
-        mpoQuery.outFields = ["MPO"];
+        mpoQuery.outFields = ["Location"];
         mpoQuery.outSpatialReference = view.spatialReference;
         mpoQuery.returnExtentOnly = true;
         mpoQuery.geometryPrecision = 0;
@@ -593,12 +597,14 @@ $(document).ready(function () {
       if (e.target.id === "townPrjs") {
         console.log("DO NOT APPLY FEATURE VIEW FILTER")
       } else {
+        $('#loading').modal('show')
         applyFeatureViewFilters();
       }
     });
 
 
     $(".geomCheck").change(function (e) {
+      view.graphics.removeAll();
       if (e.target.checked == false && e.target.id === "townPrjs") {
         townsSql = "0"
       } else if (e.target.checked == true && e.target.id === "townPrjs") {
@@ -666,7 +672,7 @@ $(document).ready(function () {
         prjLocationPolygons.visible = true;
       }
       if (spatialFilter === true && projectSearchID == false) {
-        $('#loading').modal('show')
+        //$('#loading').modal('show')
         hideLoad = false;
         queryFilter = new FeatureFilter({
           where: sql,
@@ -782,7 +788,6 @@ $(document).ready(function () {
       }
 
       function openPolyPopup(popupSelected) {
-        console.log(popupSelected, view.popup);
         view.graphics.add(popupSelected);
         view.popup.open({
           location: popupSelected.geometry.extent.center,
