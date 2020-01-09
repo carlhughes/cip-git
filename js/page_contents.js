@@ -16,7 +16,7 @@ $(document).ready(function () {
 	  
 	  
 	  
-    $(".page_help").text(strings.help_message);
+    $(".page_help").html(strings.help_message);
     $(".comment_issue").text(strings.comment_failed);
     $(".comment_success").text(strings.comment_confirmed);
     $(".project_comment_failure").text(strings.comment_failed);

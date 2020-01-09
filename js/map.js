@@ -118,6 +118,7 @@ $(document).ready(function () {
         id: 4,
         opacity: 0.3,
         popupEnabled: true,
+		  		definitionExpression: "Location_Type <> 'MPO'",
         popupTemplate: {
           title: "{Location_Type} - {Location}",
           content: "<p id='popupFeatureSelected' class='polyList' modeType='{Location}' val='{Location}'><button class='btn btn-info'>View projects in this {Location_Type}</button><br>"
