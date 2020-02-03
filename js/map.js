@@ -29,7 +29,7 @@ $(document).ready(function () {
     sql = "1=1"
     projectSearchID = false;
     extentForRegionOfInterest = false;
-    highlight = true;
+    var highlight;
 	hideLoad = false;
     polySymbol = {
       type: "simple-fill",
