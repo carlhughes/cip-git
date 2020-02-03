@@ -8,12 +8,12 @@ $(document).ready(function () {
   ], function (MapView, Map, WebMap, MapImageLayer, QueryTask, Query, watchUtils, FeatureLayer, GraphicsLayer, Locator, FeatureFilter, Graphic) {
 
     commentLayer = new FeatureLayer({
-      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/2",
+      url: "https://gis.massdot.state.ma.us/rh/rest/services/Projects/CIPCommentTool/FeatureServer/2",
       outFields: ["*"],
     });
 
     function updateComments(projId) {
-      $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/2/query", {
+      $.post("https://gis.massdot.state.ma.us/rh/rest/services/Projects/CIPCommentTool/FeatureServer/2/query", {
           where: "Division_ID = '" + projId + "'",
           outFields: "*",
           f: "json",

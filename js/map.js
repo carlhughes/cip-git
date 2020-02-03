@@ -29,7 +29,7 @@ $(document).ready(function () {
     sql = "1=1"
     projectSearchID = false;
     extentForRegionOfInterest = false;
-    var highlight;
+	var highlight;
 	hideLoad = false;
     polySymbol = {
       type: "simple-fill",
@@ -73,7 +73,7 @@ $(document).ready(function () {
     the projects and their locations 
     */
     projectList = new FeatureLayer({
-      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/6",
+      url: "https://gis.massdot.state.ma.us/rh/rest/services/Projects/CIPCommentTool/FeatureServer/6",
       outFields: ["*"],
       visible: true,
       popupEnabled: true,
@@ -84,7 +84,7 @@ $(document).ready(function () {
     });
 
     projectLocations = new FeatureLayer({
-      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/1",
+      url: "https://gis.massdot.state.ma.us/rh/rest/services/Projects/CIPCommentTool/MapServer/1",
       outFields: ["Project_Description", "ProjectID", "OBJECTID"],
       visible: true,
       title: "Linear Projects",
@@ -96,7 +96,7 @@ $(document).ready(function () {
     });
 
     projectLocationsPoints = new FeatureLayer({
-      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/3",
+      url: "https://gis.massdot.state.ma.us/rh/rest/services/Projects/CIPCommentTool/MapServer/3",
       outFields: ["*"],
       visible: true,
       title: "Point Projects",
@@ -108,7 +108,7 @@ $(document).ready(function () {
     });
 
     projectLocationsPolygonsMapImageLayer = new MapImageLayer({
-      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer",
+      url: "https://gis.massdot.state.ma.us/rh/rest/services/Projects/CIPCommentTool/MapServer",
       sublayers: [{
         id: 4,
         opacity: 0.3,
@@ -123,7 +123,7 @@ $(document).ready(function () {
     });
 
     projectLocationsPolygons = new FeatureLayer({
-      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/4",
+      url: "https://gis.massdot.state.ma.us/rh/rest/services/Projects/CIPCommentTool/MapServer/4",
       outFields: ["*"],
       visible: true,
       opacity: 0.3,
@@ -137,7 +137,7 @@ $(document).ready(function () {
     });
 
     projectLocationsMBTA = new FeatureLayer({
-      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/7",
+      url: "https://gis.massdot.state.ma.us/rh/rest/services/Projects/CIPCommentTool/MapServer/7",
       outFields: ["MBTA_Location", "route_desc", "route_long_name", "Location_Filter"],
       popupTemplate: {
         title: "MBTA Route: {MBTA_Location}",
@@ -149,11 +149,11 @@ $(document).ready(function () {
       url: "https://gis.massdot.state.ma.us/arcgis/rest/services/Boundaries/Towns/MapServer/0",
     });
     mpoLayer = new FeatureLayer({
-      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/4",
+      url: "https://gis.massdot.state.ma.us/rh/rest/services/Projects/CIPCommentTool/FeatureServer/4",
     });
 	  
     queryProjectTask = new QueryTask({
-      url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/FeatureServer/6"
+      url: "https://gis.massdot.state.ma.us/rh/rest/services/Projects/CIPCommentTool/FeatureServer/6"
     });
 	  
 
@@ -468,7 +468,7 @@ $(document).ready(function () {
         html = $.parseHTML(view.popup.content.viewModel.content)
         projId = $(html).attr('val');
       }
-      $.post("https://gisdev.massdot.state.ma.us/server/rest/services/CIP/CIPCommentToolTest/MapServer/2/query", {
+      $.post("https://gis.massdot.state.ma.us/rh/rest/services/Projects/CIPCommentTool/MapServer/2/query", {
           where: "Division_ID = '" + projId + "'",
           outFields: "*",
           f: "json",
@@ -681,7 +681,7 @@ $(document).ready(function () {
         $.ajax({
           type: "POST",
           dataType: "json",
-          url: "https://gisdev.massdot.state.ma.us/server/rest/services/CIP/Projects/FeatureServer/6/query",
+          url: "https://gis.massdot.state.ma.us/rh/rest/services/Projects/CIPCommentTool/FeatureServer/6/query",
 
           data: {
             where: "(Project_Description like '%" + request.term + "%' OR ProjectID like '%" + request.term + "%' OR Location like '%" + request.term + "%') AND " + sql,
