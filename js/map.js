@@ -725,6 +725,7 @@ $(document).ready(function () {
       $('#helpContents').show();
       $('#interactive').hide();
       geom = [];
+	  console.log(ui.item)
       var query = prjLocationLines.createQuery();
       query.where = "ProjectID = '" + ui.item.id + "'";
       switch (ui.item.loc_source) {
@@ -811,15 +812,18 @@ $(document).ready(function () {
       }
 
       function openPolyPopup(popupSelected) {
+		  console.log("Opening the poly popup: ", popupSelected)
         view.graphics.add(popupSelected);
         view.popup.open({
           location: popupSelected.geometry.extent.center,
           features: [popupSelected],
           highlightEnabled: true
         });
+		  view.goTo(popupSelected);
       }
 
       function openPopups() {
+		  console.log("Opening this popup: ", geom)
         if (geom[0].geometry.type == 'point') {
           center = geom[0].geometry
         } else {
@@ -830,7 +834,7 @@ $(document).ready(function () {
           features: geom,
           highlightEnabled: true
         });
-        view.goTo(center);
+        view.goTo(geom);
         projectSearchID = false
       }
     });
