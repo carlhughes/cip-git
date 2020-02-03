@@ -55,10 +55,10 @@ $(document).ready(function () {
     stateExtent = new Polygon({
       rings: [
         [
-          [-73, 41],
-          [-73, 43],
-          [-70.5, 43],
-          [-70.5, 41]
+          [-73.7, 40.8],
+          [-73.7, 43],
+          [-69.8, 43],
+          [-69.8, 40.8]
         ]
       ],
       spatialReference: {
@@ -156,11 +156,10 @@ $(document).ready(function () {
       url: "https://gis.massdot.state.ma.us/rh/rest/services/Projects/CIPCommentTool/FeatureServer/6"
     });
 
-	  
-	  // Add graphic when GraphicsLayer is constructed
-	  tempGraphicsLayer = new GraphicsLayer({
-	  });
-	  
+
+    // Add graphic when GraphicsLayer is constructed
+    tempGraphicsLayer = new GraphicsLayer({});
+
 
     /*
     The following functions and listners are related to popups and
@@ -440,10 +439,13 @@ $(document).ready(function () {
       $('.project_comment_failure').hide()
       $('#helpContents').show();
       $('#interactive').hide();
+      console.log("Feature selected: ", feature)
+      //tempGraphicsLayer.graphics.add(popupSelected);
       if (feature) {
         theCurrentProject = feature.attributes;
         if (highlight && feature.attributes.HighlightRemove !== "false") {
           highlight.remove();
+          console.log("Highlight remove")
         }
         $("#projectSearch").val("");
         if (feature.attributes.ProjectID) {
@@ -452,20 +454,24 @@ $(document).ready(function () {
           liked = false;
           $('#likeProject').prop('disabled', false);
         }
-        if (feature.attributes.Location_Type == "Town" || feature.attributes.Location_Type == "RTA" || feature.attributes.Location_Type == "Highway District" || feature.attributes.Location_Type == "Statewide") {
+        if (feature.attributes.Location_Type == "Town" || feature.attributes.Location_Type == "RTA" || feature.attributes.Location_Type == "Highway District" || feature.attributes.Location_Type == "Statewide" || feature.geometry.type == "polygon") {
           popupSelected.geometry = feature.geometry;
           view.graphics.add(popupSelected);
+          console.log("Polygon feature selected")
         } else {
           popupSelected.geometry = null;
           view.graphics.remove(popupSelected);
+          console.log("Polygon feature not selected")
         }
       } else if (highlight) {
         highlight.remove();
         popupSelected.geometry = null;
         view.graphics.remove(popupSelected);
+        console.log("Higlight true")
       } else {
         popupSelected.geometry = null;
         view.graphics.remove(popupSelected);
+        console.log("Nothing")
       }
     });
 
@@ -745,6 +751,7 @@ $(document).ready(function () {
         case 'POINT':
           projectLocationsPoints.queryFeatures(query).then(function (pts) {
             popupSelected = pts.features[0];
+			view.zoom = 10;
             openSearchedPopup();
           })
           break;
@@ -795,7 +802,8 @@ $(document).ready(function () {
             ProjectID: ui.item.id,
             HighlightRemove: "false"
           }
-          popupSelected.geometry = stateExtent
+          popupSelected.geometry = stateExtent.centroid
+		  view.zoom = 8;
           openSearchedPopup();
           break;
         default:
@@ -804,27 +812,18 @@ $(document).ready(function () {
           pQuery.where = "Location like '%" + ui.item.loc_source + "%'";
           prjLocationPolygons.queryFeatures(pQuery).then(function (polyLocation) {
             popupSelected = polyLocation.features[0];
-            //            popupSelected.popupTemplate = {
-            //              title: "{Project_Description} - ({ProjectID})",
-            //              content: popupFunction
-            //            };
-            //            popupSelected.attributes = {
-            //              Project_Description: ui.item.value,
-            //              ProjectID: ui.item.id,
-            //              HighlightRemove: "false"
-            //            }
-
-            popupSelected.symbol = {
-              type: "simple-fill", // autocasts as new SimpleFillSymbol()
-              color: "red",
-              outline: { // autocasts as new SimpleLineSymbol()
-                color: [128, 128, 128, 0.5],
-                width: "0.5px"
-              }
+            popupSelected.popupTemplate = {
+              title: "{Project_Description} - ({ProjectID})",
+              content: popupFunction
+            };
+            popupSelected.attributes = {
+              Project_Description: ui.item.value,
+              ProjectID: ui.item.id,
+              HighlightRemove: "false"
             }
-			  tempGraphicsLayer.graphics.add(popupSelected);
-			  //openSearchedPopup()
-            //view.graphics.add(popupSelected)
+
+            popupSelected.symbol = polySymbol;
+            openSearchedPopup()
           })
       }
     });
@@ -835,16 +834,9 @@ $(document).ready(function () {
         features: [popupSelected],
         highlightEnabled: true
       });
-      console.log([popupSelected])
       projectSearchID = false
     }
 
-
-    view.graphics.on("after-add", function (event) {
-      console.log(event, " has been added to the map.");
-      console.log(tempGraphicsLayer.features);
-      //openSearchedPopup();
-    });
     /*
 	This waits for a checkbox with the .geomCheck class to change. It will then filter
 	the polygon layer to hide/remove features based on the options (towns, RTAs, districts)

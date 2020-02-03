@@ -64,3 +64,8 @@ select {
 .esri-legend__layer-caption {
 display: none;
 }
+
+#programHint{
+	font: italic;
+	font-size: 10px;
+}
