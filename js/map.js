@@ -29,6 +29,8 @@ $(document).ready(function () {
     projectSearchID = false;
     extentForRegionOfInterest = false;
     var highlight;
+    var selectedHighlight;
+    var showPolyGraphic;
     hideLoad = false;
     polySymbol = {
       type: "simple-fill",
@@ -175,6 +177,7 @@ $(document).ready(function () {
         outFields: ["*"],
         where: "(Location_Source = '" + value + "') AND " + sql
       });
+      view.graphics.removeAll();
       queryProjectTask.execute(query).then(function (result) {
         if (result.features.length > 0) {
           var table = ""
@@ -197,6 +200,8 @@ $(document).ready(function () {
             });
             polyProjects.push(thisProject);
           });
+          showPolyGraphic = polyProjects[0]
+          view.graphics.add(showPolyGraphic);
           view.popup.open({
             features: polyProjects, // array of graphics
             featureMenuOpen: true,
@@ -230,8 +235,8 @@ $(document).ready(function () {
               attributes: this.attributes,
               symbol: {
                 type: "simple-line",
-                color: [226, 119, 40],
-                width: 10
+                color: [255, 255, 0, 1],
+                width: 4
               },
               popupTemplate: {
                 title: "{Project_Description}",
@@ -290,6 +295,8 @@ $(document).ready(function () {
         case 'system':
           popupFeatures = systemProjects;
       }
+	  showPolyGraphic = popupFeatures[0]
+      view.graphics.add(showPolyGraphic);
       view.popup.open({
         features: popupFeatures,
         featureMenuOpen: true,
@@ -538,8 +545,7 @@ $(document).ready(function () {
     });
 
     $(".filter").change(function (e) {
-      if (e.target.id === "townPrjs") {
-      } else {
+      if (e.target.id === "townPrjs") {} else {
         $('#loading').modal('show')
         applyFeatureViewFilters();
       }
@@ -612,7 +618,7 @@ $(document).ready(function () {
       }
       prjLocationLines.filter = queryFilter
       prjLocationPoints.filter = queryFilter
-	  prjLocationLines.definitionExpression = sql
+      prjLocationLines.definitionExpression = sql
       prjLocationPoints.definitionExpression = sql
     }
 
@@ -660,7 +666,7 @@ $(document).ready(function () {
         searchedProject = ui.item.id;
       }
     });
-    var selectedHighlight;
+
     $("#projectSearch").autocomplete("option", "select", function (event, ui) {
       view.popup.clear();
       view.popup.close();
@@ -727,14 +733,14 @@ $(document).ready(function () {
           pQuery.where = "Location like '%" + ui.item.loc_source + "%'";
           prjLocationPolygons.queryFeatures(pQuery).then(function (result) {
             popupSelected = result.features[0];
-			popupSelected.symbol = polySymbol;
+            popupSelected.symbol = polySymbol;
             popupSelected.attributes.Project_Description = ui.item.value
             popupSelected.attributes.ProjectID = ui.item.id
             popupSelected.popupTemplate = {
               title: "{Project_Description} - ({ProjectID})",
               content: popupFunction
             };
-			view.graphics.add(popupSelected);
+            view.graphics.add(popupSelected);
             openSearchedPopup();
           })
       }
@@ -756,7 +762,6 @@ $(document).ready(function () {
       $('#helpContents').show();
       $('#interactive').hide();
       if (feature) {
-        theCurrentProject = feature.attributes;
         $("#projectSearch").val("");
         if (highlight && feature.attributes.HighlightRemove !== "false") {
           highlight.remove();
@@ -774,6 +779,7 @@ $(document).ready(function () {
       } else {
         popupSelected.geometry = null;
         view.graphics.remove(popupSelected);
+        view.graphics.remove(showPolyGraphic);
       }
     });
 
