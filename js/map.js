@@ -350,6 +350,13 @@ $(document).ready(function () {
           if (val == false) {
             hideLoad = true;
             $('#loading').modal('hide')
+			console.log("Project lines updating: ", val)
+			prjLocationLines.queryFeatureCount().then(function(count){
+				console.log(count);
+			})
+			  			prjLocationLines.queryFeatures().then(function(results){
+				console.log(results);
+			})
           }
         });
       })
@@ -618,11 +625,11 @@ $(document).ready(function () {
       }
       prjLocationLines.filter = queryFilter
       prjLocationPoints.filter = queryFilter
-      prjLocationLines.definitionExpression = sql
-      prjLocationPoints.definitionExpression = sql
+	  projectLocations.definitionExpression = sql
+      projectLocationsPoints.definitionExpression = sql
     }
 
-
+	  
     /*
     The following controls the project search bar. It defines it as an autopopulate
 	input search. It also tells it what to search for when a user inputs some text.
