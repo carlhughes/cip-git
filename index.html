@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="css/style.css"/>
 </head>
 <body>
@@ -66,7 +67,7 @@
         <label class="form-check-label" for="districtPrjs"> Highway District projects </label>
       </div>
 		<br></br>
-      <label for="programs">CIP Program</label><span id="programHint"> (Hold Ctrl to select multiple)</span>
+      <label for="programs">CIP Program</label><br><span id="programHint"> (To select multiple CIP programs, hold the Ctrl button and click each program you want to include)</span>
       <div class="input-group mb-3">
         <select class="form-control custom-select filter" id="programs" multiple>
           <option value="All" division="All" selected>All</option>
@@ -117,7 +118,7 @@
             </div>
             <div class="alert alert-warning string project_comment_failure" role="alert" style="display: none" > </div>
             <div class="alert alert-success string project_comment_success" role="alert" style="display: none" > </div>
-            <button class="btn btn-primary m-2" id="likeProject" type="button">Like Project</button>
+            <button class="btn btn-primary m-2" id="likeProject" type="button"><i style="font-size:24px" class="fa">&#xf087;</i></button>
             <button class="btn btn-primary m-2" id="submitComment" type="submit">Submit Comment</button>
           </form>
         </div>
