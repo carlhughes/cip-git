@@ -42,6 +42,8 @@ $(document).ready(function () {
     $("#commentForm").submit(function (event) {
       event.preventDefault();
       formValue = $(this).serializeArray()
+      console.log(formValue);
+	  category = null
       submitComment(formValue);
     })
 
@@ -50,16 +52,21 @@ $(document).ready(function () {
       event.preventDefault();
       formValue = $(this).serializeArray()
       projId = '99999'
+      console.log(formValue);
+	  category = $("#catSelect").val()
       submitComment(formValue);
     })
 
     function submitComment(formValue) {
       theComment = {
         "Name": formValue[0].value,
-        "Email": formValue[1].value,
-        "Organization": formValue[2].value,
-        "Comments": formValue[3].value,
-        "Division_ID": projId
+        "Last_Name": formValue[1].value,
+        "Email": formValue[2].value,
+        "Organization": formValue[4].value,
+        "Zip": formValue[3].value,
+        "Category": category,
+		"Comments": formValue[5].value,
+        "Division_ID": projId 
       }
       addFeature = new Graphic({
         attributes: theComment
@@ -67,7 +74,7 @@ $(document).ready(function () {
       commentLayer.applyEdits({
         addFeatures: [addFeature],
       }).then(function (results) {
-		  $('#prjLikes').hide()
+        $('#prjLikes').hide()
         if (results.addFeatureResults[0].error == null) {
           if (projId == '99999') {
             $('.comment_success').show()
@@ -101,7 +108,7 @@ $(document).ready(function () {
             updateFeatures: [projectToLike],
           }).then(function (results) {
             $('#prjLikes').append(projectToLike.attributes.Votes + " people like this project.");
-			  $('#prjLikes').show()
+            $('#prjLikes').show()
           });
         });
 
@@ -110,11 +117,17 @@ $(document).ready(function () {
       }
     })
 
+    categories = ["Airports", "Roadway or bridge maintenance", "Roadway safety", "Bike and pedestrian improvements", "MBTA buses", "MBTA commuter rail", "MBTA rapid transit", "Freight", "Planning/funding", "Rail", "Regional transit", "Registry of Motor Vehicles", "Other"];
 
     $('#generalComment').on('shown.bs.modal', function () {
       $('.comment_success').hide()
       $('.general_comment_issue').hide()
       $('#generalCommentForm').show();
+      $(categories).each(function () {
+        $('#catSelect').append(
+          $('<option></option>').val(this).html(this)
+        );
+      });
     })
 
   });
