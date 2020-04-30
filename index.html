@@ -66,7 +66,7 @@
         <input class="geomCheck" type="checkbox" id="districtPrjs" checked>
         <label class="form-check-label" for="districtPrjs"> Highway District projects </label>
       </div>
-		<br></br>
+		<br>
       <label for="programs">CIP Program</label><br><span id="programHint"> (To select multiple CIP programs, hold the Ctrl button and click each program you want to include)</span>
       <div class="input-group mb-3">
         <select class="form-control custom-select filter" id="programs" multiple>
@@ -101,7 +101,7 @@
       </div>
       <div id="interactive" class="m-2" style="display: none">
         <div class="comment-form">
-          <form id="commentForm" class= "w-100 sideContents" >
+          <form id="commentForm" class= "w-100 sideContents needs-validation" novalidate >
             <h4>Leave a Comment</h4>
             <div class="form-group">
               <label for="nameField">First Name</label>
@@ -116,6 +116,11 @@
               <input type="text" class="form-control" id="townField" placeholder="If applicable" name="townField">
             </div>
             <div class="form-group">
+				<label for="catField">Select the topic that corresponds the most to your comment</label>
+				<select class="form-control" id="catSelectPrj" required>
+				<option value="" disabled selected>Please choose one</option>
+				</select>
+				<div class="invalid-feedback"> Please select a topic.</div>
               <label for="commentField">Comments</label>
               <textarea class="form-control" id="commentField" placeholder="Enter your comments here" name="commentField" required></textarea>
               <div class="invalid-feedback"> Please enter a comment in the textarea. </div>

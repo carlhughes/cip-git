@@ -40,22 +40,70 @@ $(document).ready(function () {
     }
 
     $("#commentForm").submit(function (event) {
-      event.preventDefault();
+	  console.log(event)
+	  console.log(this)
       formValue = $(this).serializeArray()
       console.log(formValue);
-	  category = null
-      submitComment(formValue);
+      category = $("#catSelectPrj").val()
+      var forms = document.getElementsByClassName('needs-validation');
+      var validation = Array.prototype.filter.call(forms, function (form) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+          formValid = false;
+        }
+        form.classList.add('was-validated');
+        event.preventDefault();
+        event.stopPropagation();
+        if (form.checkValidity() === true) {
+          formValid = true;
+          console.log("Save clicked - form is valid");
+          category = $("#catSelect").val()
+          submitComment(formValue);
+        }
+      });
     })
-
 
     $("#generalCommentForm").submit(function (event) {
       event.preventDefault();
       formValue = $(this).serializeArray()
-      projId = '99999'
-      console.log(formValue);
-	  category = $("#catSelect").val()
-      submitComment(formValue);
+      var forms = document.getElementsByClassName('needs-validation');
+      var validation = Array.prototype.filter.call(forms, function (form) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+          formValid = false;
+        }
+        form.classList.add('was-validated');
+        event.preventDefault();
+        event.stopPropagation();
+        if (form.checkValidity() === true) {
+          formValid = true;
+          console.log("Save clicked - form is valid");
+          projId = '99999'
+          console.log(formValue);
+          category = $("#catSelect").val()
+          submitComment(formValue);
+        }
+      });
     })
+
+//    $("#commentForm").submit(function (event) {
+//      event.preventDefault();
+//      formValue = $(this).serializeArray()
+//      console.log(formValue);
+//      category = null
+//      submitComment(formValue);
+//    })
+	  
+    //    $("#generalCommentForm").submit(function (event) {
+    //      event.preventDefault();
+    //      formValue = $(this).serializeArray()
+    //      projId = '99999'
+    //      console.log(formValue);
+    //	  category = $("#catSelect").val()
+    //      submitComment(formValue);
+    //    })
 
     function submitComment(formValue) {
       theComment = {
@@ -65,8 +113,8 @@ $(document).ready(function () {
         "Organization": formValue[4].value,
         "Zip": formValue[3].value,
         "Category": category,
-		"Comments": formValue[5].value,
-        "Division_ID": projId 
+        "Comments": formValue[5].value,
+        "Division_ID": projId
       }
       addFeature = new Graphic({
         attributes: theComment
@@ -119,6 +167,12 @@ $(document).ready(function () {
 
     categories = ["Airports", "Roadway or bridge maintenance", "Roadway safety", "Bike and pedestrian improvements", "MBTA buses", "MBTA commuter rail", "MBTA rapid transit", "Freight", "Planning/funding", "Rail", "Regional transit", "Registry of Motor Vehicles", "Other"];
 
+      $(categories).each(function () {
+        $('#catSelectPrj').append(
+          $('<option></option>').val(this).html(this)
+        );
+      });
+	  
     $('#generalComment').on('shown.bs.modal', function () {
       $('.comment_success').hide()
       $('.general_comment_issue').hide()

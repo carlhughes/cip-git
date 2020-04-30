@@ -9,9 +9,10 @@ $(document).ready(function () {
     "esri/widgets/Popup",
     "esri/widgets/Home",
     "esri/widgets/Legend",
+    "esri/widgets/BasemapGallery",
     "esri/views/layers/support/FeatureFilter",
     "esri/Graphic"
-  ], function (MapView, Map, WebMap, MapImageLayer, QueryTask, Query, watchUtils, FeatureLayer, GraphicsLayer, Extent, Polygon, Locator, Search, Popup, Home, Legend, FeatureFilter, Graphic, comments) {
+  ], function (MapView, Map, WebMap, MapImageLayer, QueryTask, Query, watchUtils, FeatureLayer, GraphicsLayer, Extent, Polygon, Locator, Search, Popup, Home, Legend, BasemapGallery, FeatureFilter, Graphic, comments) {
 
     /*
     These are global variables used throughout the rest of this page.
@@ -56,10 +57,10 @@ $(document).ready(function () {
     stateExtent = new Polygon({
       rings: [
         [
-          [-73.7, 40.8],
-          [-73.7, 43],
-          [-69.8, 43],
-          [-69.8, 40.8]
+          [-73.5, 42.5],
+          [-73.5, 41.5],
+          [-70, 42.5],
+          [-70, 41.5]
         ]
       ],
       spatialReference: {
@@ -295,7 +296,7 @@ $(document).ready(function () {
         case 'system':
           popupFeatures = systemProjects;
       }
-	  showPolyGraphic = popupFeatures[0]
+      showPolyGraphic = popupFeatures[0]
       view.graphics.add(showPolyGraphic);
       view.popup.open({
         features: popupFeatures,
@@ -303,7 +304,6 @@ $(document).ready(function () {
         highlightEnabled: true
       });
     });
-
 
     /*
     The following are map and view related. it creates the map
@@ -318,19 +318,18 @@ $(document).ready(function () {
     map.addMany([projectLocationsPolygonsMapImageLayer, projectLocations, projectLocationsPoints, projectLocationsMBTA]);
     view = new MapView({
       map: map,
-      scale: 1155581.108577,
+	  center: stateExtent.centroid,
       container: "viewDiv",
       spatialReference: {
         wkid: 3857
       },
+	  zoom: 8,
       highlightOptions: {
         color: [255, 255, 0, 1],
         haloOpacity: 0.9,
         fillOpacity: 0.2
       }
     });
-
-    view.goTo(stateExtent);
     view.watch("updating", function (event) {
       if (event == true) {} else if (event == false) {
         $('#loading').modal('hide') //Hide the loading wheel once all layers have finished updating
@@ -350,13 +349,11 @@ $(document).ready(function () {
           if (val == false) {
             hideLoad = true;
             $('#loading').modal('hide')
-			console.log("Project lines updating: ", val)
-			prjLocationLines.queryFeatureCount().then(function(count){
-				console.log(count);
-			})
-			  			prjLocationLines.queryFeatures().then(function(results){
-				console.log(results);
-			})
+            console.log("Project lines updating: ", val)
+            prjLocationLines.queryFeatureCount().then(function (count) {
+            })
+            prjLocationLines.queryFeatures().then(function (results) {
+            })
           }
         });
       })
@@ -386,6 +383,18 @@ $(document).ready(function () {
       view: view
     });
 
+    var l = document.createElement('div');
+    l.setAttribute("id", "legend");
+    l.className = 'esri-widget--button esri-widget esri-interactive';
+    l.role = 'button';
+    l.innerHTML = '<img src="images/legendG_icon.png" class="widget-icons" alt="Legend Widget" style="width: 20px">'
+
+    var b = document.createElement('div');
+    b.setAttribute("id", "basemap");
+    b.className = 'esri-widget--button esri-widget esri-interactive';
+    b.role = 'button';
+    b.innerHTML = '<img src="images/basemapG_icon.png" class="widget-icons"alt="Basemap Widget" style="width: 20px">'
+
     legend = new Legend({
       view: view,
       layerInfos: [{
@@ -398,18 +407,55 @@ $(document).ready(function () {
     });
 
     view.ui.add([{
-      component: homeBtn,
-      position: "top-left",
-      index: 1
-    }, {
       component: searchWidget,
       position: "top-left",
       index: 0
     }, {
-      component: legend,
-      position: "bottom-left",
+      component: homeBtn,
+      position: "top-left",
       index: 1
+    }, {
+      component: b,
+      position: "top-left",
+      index: 3
+    }, {
+      component: l,
+      position: "top-left",
+      index: 4
+    }, {
+      component: legend,
+      position: "top-left",
+      index: 5
     }]);
+
+    var basemapGallery = new BasemapGallery({
+      id: "basemapGal",
+    });
+
+    $("#basemap").click(function () {
+      console.log(basemapGallery.view);
+      if (basemapGallery.view) {
+        basemapGallery.view = null;
+        view.ui.remove(basemapGallery, "top-left");
+      } else {
+        basemapGallery.view = view;
+        legend.view = null;
+        view.ui.remove(legend, "top-left");
+        view.ui.add(basemapGallery, "top-left");
+      }
+    });
+
+    $("#legend").click(function () {
+      if (legend.view) {
+        legend.view = null;
+        view.ui.remove(legend, "top-left");
+      } else {
+        legend.view = view;
+        basemapGallery.view = null;
+        view.ui.remove(basemapGallery, "top-left");
+        view.ui.add(legend, "top-left");
+      }
+    });
 
     view.popup.on("trigger-action", function (event) {
       if (event.action.id === "back") {
@@ -451,7 +497,6 @@ $(document).ready(function () {
           results.show();
           $('#interactive').show();
         });
-
     }
 
     /*
@@ -625,11 +670,11 @@ $(document).ready(function () {
       }
       prjLocationLines.filter = queryFilter
       prjLocationPoints.filter = queryFilter
-	  projectLocations.definitionExpression = sql
+      projectLocations.definitionExpression = sql
       projectLocationsPoints.definitionExpression = sql
     }
 
-	  
+
     /*
     The following controls the project search bar. It defines it as an autopopulate
 	input search. It also tells it what to search for when a user inputs some text.
