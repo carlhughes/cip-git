@@ -27,7 +27,7 @@ $(document).ready(function () {
         if (form.checkValidity() === true) {
           formValid = true;
           console.log("Save clicked - form is valid");
-          category = $("#catSelect").val()
+          category = $("#catSelectPrj").val()
           submitComment(formValue);
         }
       });
