@@ -40,6 +40,10 @@ select {
   border-bottom: 1px dotted #ccc;
 }
 
+#results{
+  max-height: 100px;
+}
+
 #viewDiv, .col-xl{
 	min-height: 800px;
 }

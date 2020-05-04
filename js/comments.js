@@ -84,8 +84,7 @@ $(document).ready(function () {
             updateComments(projId);
           }
         } else {
-          $('.general_comment_issue').show()
-          $('.project_comment_failure').show()
+            $('#comment_failure_modal').modal('show')
         }
       });
     }

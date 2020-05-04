@@ -3,7 +3,7 @@
     "help_message": "<b>To find a CIP Project:</b></br>      - Enter an address or zoom in by using the +/- tools or your mouse scroll wheel.</br> - Click on a project, MBTA line, or town/district/RTA to display a popup with project information.</br>- You can also search for a project using the project search field above the map.</br> - To filter projects in the map, use the filter options on the left hand side of the map.</br></br><b>To leave a comment:</b></br> - To leave a comment for a specific project, first select the project from the map or by using the project search and then complete the comment form on the right hand side of the map. Click 'Submit Comment' when finished.</br> - To leave a general comment, click 'General Comment' from above the map or underneath the instructions on the right hand side of the map.",
     "comment_confirmed": "Thank you for your comment! <br><br> Please check <a href=https://www.mass.gov/service-details/capital-investment-plan-cip' target='_blank'>our website</a> to see our responses.",
     "general_comment_confirmed": "Thank you for your general comment. Please check https://www.mass.gov/service-details/capital-investment-plan-cip to see our responses.",
-    "comment_failed": "Comment could not be saved. Please try again later or email your comment to dot.gisservices@state.ma.us."
+    "comment_failed": "Comment could not be saved! <br><br> Please try again later or <a href=mailto:dot.gisservices@dot.state.ma.us' target='_blank'>email us</a> with your comment."
   },
   "settings": "false"
 }

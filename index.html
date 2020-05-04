@@ -66,8 +66,10 @@
         <input class="geomCheck" type="checkbox" id="districtPrjs" checked>
         <label class="form-check-label" for="districtPrjs"> Highway District projects </label>
       </div>
-		<br>
-      <label for="programs">CIP Program</label><br><span id="programHint"> (To select multiple CIP programs, hold the Ctrl button and click each program you want to include)</span>
+      <br>
+      <label for="programs">CIP Program</label>
+      <br>
+      <span id="programHint"> (To select multiple CIP programs, hold the Ctrl button and click each program you want to include)</span>
       <div class="input-group mb-3">
         <select class="form-control custom-select filter" id="programs" multiple>
           <option value="All" division="All" selected>All</option>
@@ -91,7 +93,7 @@
       </div>
     </div>
     <div class="col-xl-8" id="viewDiv"></div>
-    <div class="col-xl-2 overflow-auto">
+    <div class="col-xl-2">
       <div class="sideContents m-2" id="helpContents">
         <h4 class="">Welcome to the CIP Comment Tool and Interactive Map!</h4>
         <p class="string page_help" id="page_help_main"></p>
@@ -110,17 +112,17 @@
               <input type="text" class="form-control" id="lastField" placeholder="Optional" name="lastField">
               <label for="emailField">Email</label>
               <input type="text" class="form-control" id="emailField" placeholder="Optional" name="emailField">
-			  <label for="zipField">Zip Code</label>
+              <label for="zipField">Zip Code</label>
               <input type="text" class="form-control" id="zipField" placeholder="Optional" name="zipField">
               <label for="townField">Organization</label>
               <input type="text" class="form-control" id="townField" placeholder="If applicable" name="townField">
             </div>
             <div class="form-group">
-				<label for="catField">Select the topic that corresponds the most to your comment</label>
-				<select class="form-control" id="catSelectPrj" required>
-				<option value="" disabled selected>Please choose one</option>
-				</select>
-				<div class="invalid-feedback"> Please select a topic.</div>
+              <label for="catField">Select the topic that corresponds the most to your comment</label>
+              <select class="form-control" id="catSelectPrj" required>
+                <option value="" disabled selected>Please choose one</option>
+              </select>
+              <div class="invalid-feedback"> Please select a topic.</div>
               <label for="commentField">Comments</label>
               <textarea class="form-control" id="commentField" placeholder="Enter your comments here" name="commentField" required></textarea>
               <div class="invalid-feedback"> Please enter a comment in the textarea. </div>
@@ -132,14 +134,13 @@
           </form>
         </div>
         <div id="prjLikes" class="alert alert-success string" style="display: none" > </div>
+        <h4> Comments </h4>
         <div class="comment-list overflow-auto" style="max-height: 600px;">
           <div class="w-100" id="projectList" >
             <div class="container">
               <div class="row">
                 <div class="col">
-                  <div class="page-header">
-                    <h3> Comments </h3>
-                  </div>
+                  <div class="page-header"> </div>
                   <div class="comments-list" id="results"> </div>
                 </div>
               </div>
@@ -159,13 +160,9 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle">Success</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
       </div>
-      <div class="modal-body alert-success" id="comment_success_message">
-        Thank you for your comment
-      </div>
+      <div class="modal-body alert-success" id="comment_success_message"> Thank you for your comment </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
@@ -177,13 +174,9 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLongTitle">Failed</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
       </div>
-      <div class="modal-body alert-danger" id="comment_failure_message">
-        Thank you for your comment
-      </div>
+      <div class="modal-body alert-danger" id="comment_failure_message">There was a problem submitting your comment. Please try again later or email us for help</div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>
@@ -197,10 +190,10 @@ function googleTranslateElementInit() {
 }
 </script> 
 <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>	
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> 
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script> 
-<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>	
+<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script> 
 <script src="https://js.arcgis.com/4.13/"></script> 
 <script src="js/page_contents.js"></script> 
 <script src="js/controls.js"></script> 
