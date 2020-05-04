@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=7,IE=9">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://js.arcgis.com/4.13/esri/themes/light/main.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-custom fixed-top"> <img src="images/massdot_logo.png" class="img-fluid" alt="Placeholder image"><a class="navbar-brand">Capital Investment Plan, Comment Tool</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+  <div class="collapse navbar-collapse" id="navbarCollapse">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item"> <a class="nav-link" href="https://www.mass.gov/service-details/capital-investment-plan-cip" target="_blank">Go to CIP Document</a> </li>
+      <li class="nav-item"> <button class="btn btn-outline-info my-2 my-sm-0 m-1" data-toggle="modal" data-target="#aboutTool">Help</button></li>
+      <li class="nav-item"> <button class="btn btn-outline-info my-2 my-sm-0 m-1" data-toggle="modal" data-target="#generalComment">General Comment</button> </li>
+    </ul>
+    <form class="form-inline mt-2 mt-md-0">
+      <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+    </form>
+  </div>
+</nav>
+<div class="row no-gutter p-0 m-0" id="row-contents">
+  <div class="col-md-3 p-2">
+    <div class="sideContents">
+      <h4>Filter Projects</h4>
+      <label for="division">MassDOT Division</label>
+      <div class="input-group mb-3">
+        <select class="form-control filter" id="division">
+          <option>All</option>
+        </select>
+      </div>
+      <label for="townSelect">Town</label>
+      <div class="input-group mb-3">
+        <select class="form-control filter" id="townSelect">
+          <option value="0">All</option>
+        </select>
+      </div>
+      <label for="mpoSelect">MPO</label>
+      <div class="input-group mb-3">
+        <select class="form-control town-filter" id="mpoSelect">
+          <option value="All">All</option>
+        </select>
+      </div>
+      <div class="filter mr-sm-2 w-100 ">
+        <input class="geomCheck" type="checkbox" id="townPrjs" checked>
+        <label class="form-check-label" for="townPrjs"> Town-wide projects </label>
+      </div>
+      <div class="filter mr-sm-2 w-100 ">
+        <input class="geomCheck" type="checkbox" id="rtaPrjs" checked>
+        <label class="form-check-label" for="rtaPrjs"> RTA-wide projects </label>
+      </div>
+      <div class="filter mr-sm-2 w-100 ">
+        <input class="geomCheck" type="checkbox" id="districtPrjs" checked>
+        <label class="form-check-label" for="districtPrjs"> Highway District projects </label>
+      </div>
+      <br>
+      <label for="programs">CIP Program</label>
+      <br>
+      <span id="programHint"> (To select multiple CIP programs, hold the Ctrl button and click each program you want to include)</span>
+      <div class="input-group mb-3">
+        <select class="form-control custom-select filter" id="programs" multiple>
+          <option value="All" division="All" selected>All</option>
+        </select>
+      </div>
+      <div>
+        <label for="amount">Cost Range</label>
+        <form class="form">
+          <div class="form-inline flex-grow-1">Min:  $
+            <input type="text" class="form-control form-control-sm costInput flex-grow-1 m-2" id="minCost" placeholder="0" value="0">
+          </div>
+          <div class="form-inline ">Max:  $
+            <input type="text" class="form-control form-control-sm costInput flex-grow-1 m-2" id="maxCost" placeholder="5,000,000,000" value="5,000,000,000">
+          </div>
+        </form>
+        <div id="cost-range" 	class="filter"></div>
+      </div>
+      <br>
+      <div class="filter mr-sm-2">
+        <p>To view town, RTA, or statewide projects which match the current filters, click on that town or RTA in the map</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-7 p-0" id="viewDiv"></div>
+  <div class="col-md-2 p-0">
+    <div class="sideContents m-2 " id="helpContents">
+      <h4 class="">Welcome to the CIP Comment Tool and Interactive Map!</h4>
+      <p class="string page_help" id="page_help_main"></p>
+      <form class="form-inline my-2 my-lg-0 p-2">
+        <button type="button" class="btn btn-primary my-2 my-sm-0 btn-block" data-toggle="modal" data-target="#generalComment">Leave a General Comment</button>
+      </form>
+    </div>
+    <div id="interactive" class="m-2 overflow-auto" style="display: none">
+      <div class="comment-form">
+        <form id="commentForm" class= "w-100 sideContents needs-validation" novalidate >
+          <h4>Leave a Comment</h4>
+          <div class="form-group">
+            <label for="nameField">First Name</label>
+            <input type="text" class="form-control" id="nameField" placeholder="Optional" name="nameField">
+            <label for="lastField">Last Name</label>
+            <input type="text" class="form-control" id="lastField" placeholder="Optional" name="lastField">
+            <label for="emailField">Email</label>
+            <input type="text" class="form-control" id="emailField" placeholder="Optional" name="emailField">
+            <label for="zipField">Zip Code</label>
+            <input type="text" class="form-control" id="zipField" placeholder="Optional" name="zipField">
+            <label for="townField">Organization</label>
+            <input type="text" class="form-control" id="townField" placeholder="If applicable" name="townField">
+          </div>
+          <div class="form-group">
+            <label for="catField">Select the topic that corresponds the most to your comment</label>
+            <select class="form-control" id="catSelectPrj" required>
+              <option value="" disabled selected>Please choose one</option>
+            </select>
+            <div class="invalid-feedback"> Please select a topic.</div>
+            <label for="commentField">Comments</label>
+            <textarea class="form-control" id="commentField" placeholder="Enter your comments here" name="commentField" required></textarea>
+            <div class="invalid-feedback"> Please enter a comment in the textarea. </div>
+          </div>
+          <div class="alert alert-warning string project_comment_failure" role="alert" style="display: none" > </div>
+          <div class="alert alert-success string project_comment_success" role="alert" style="display: none" > </div>
+          <button class="btn btn-primary m-2" id="likeProject" type="button"><i style="font-size:24px" class="fa">&#xf087;</i></button>
+          <button class="btn btn-primary m-2" id="submitComment" type="submit">Submit Comment</button>
+        </form>
+      </div>
+      <div id="prjLikes" class="alert alert-success string" style="display: none" > </div>
+      <div class="comment-list overflow-auto" style="max-height: 600px;">
+        <div class="w-100" id="projectList" >
+          <div class="container">
+            <div class="row">
+              <div class="col">
+                <div class="page-header">
+                  <h3> Comments </h3>
+                </div>
+                <div class="comments-list" id="results"> </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade show" id="aboutTool" tabindex="-1" role="dialog" aria-labelledby="aboutToolTitle" aria-hidden="true"> </div>
+<div class="modal fade show" id="generalComment" tabindex="-1" role="dialog" aria-labelledby="generalCommentTitle" aria-hidden="true"> </div>
+<div class="modal fade show" id="loading" tabindex="-1" role="dialog" aria-labelledby="loadingTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false"></div>
+<!-- Modal -->
+<div class="modal fade" id="comment_success_modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Success</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+      </div>
+      <div class="modal-body alert-success" id="comment_success_message"> Thank you for your comment </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="comment_failure_modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Failed</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+      </div>
+      <div class="modal-body alert-danger" id="comment_failure_message"> Thank you for your comment </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+function googleTranslateElementInit() {
+        new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'ar,es,fr,ht,it,km,ko,pl,pt,ru,vi,zh-CN', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+        document.querySelector('#google_translate_element') !== null ? document.querySelector('#google_translate_element').classList.add('has-rendered') : '';
+}
+</script> 
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script> 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> 
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> 
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script> 
+<script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script> 
+<script src="https://js.arcgis.com/4.13/"></script> 
+<script src="js/page_contents.js"></script> 
+<script src="js/controls.js"></script> 
+<script src="js/map.js"></script> 
+<script src="js/comments.js"></script>
+</body>
+</html>

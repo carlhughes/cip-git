@@ -1,22 +1,11 @@
-html, body {
-  height: 100%;
+/* Show it is fixed to the top */
+body {
+  min-height: 75rem;
 }
 
-.min-100 {
-    min-height: 100%;
-}
 .navbar-custom {
   background-color: #14558f;
   color: #FFFFFF;
-}
-
-.custom-column{
-bottom: 45px;
-    top: 0px;
-    left: 0px;
-	right: 0px;
-    position: absolute;
-	min-height: 800px;
 }
 
 #mainDiv {
@@ -27,7 +16,8 @@ bottom: 45px;
   color: #FFFFFF;
 }
 .sideContents {
-  padding-top: 15px;
+	min-height: 400px;
+	overflow: auto;
 }
 select {
   padding-bottom: 6px;
@@ -35,12 +25,9 @@ select {
 .ui-autocomplete {
   max-height: 400px;
   overflow-y: auto;
-  /* prevent horizontal scrollbar */
   overflow-x: auto;
 }
-/* IE 6 doesn't support max-height
-   * we use height instead, but this forces the menu to always be this tall
-   */
+
 * html .ui-autocomplete {
   height: 400px;
 }

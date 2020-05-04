@@ -1,50 +1,19 @@
 $(document).ready(function () {
-  require(["esri/views/MapView", "esri/Map", "esri/WebMap", "esri/layers/MapImageLayer", "esri/tasks/QueryTask", "esri/tasks/support/Query", "esri/core/watchUtils",
+  require(["esri/Map", "esri/WebMap", "esri/layers/MapImageLayer", "esri/tasks/QueryTask", "esri/tasks/support/Query", "esri/core/watchUtils",
     "esri/layers/FeatureLayer",
-    "esri/layers/GraphicsLayer",
-    "esri/tasks/Locator",
     "esri/views/layers/support/FeatureFilter",
     "esri/Graphic"
-  ], function (MapView, Map, WebMap, MapImageLayer, QueryTask, Query, watchUtils, FeatureLayer, GraphicsLayer, Locator, FeatureFilter, Graphic) {
+  ], function (Map, WebMap, MapImageLayer, QueryTask, Query, watchUtils, FeatureLayer, FeatureFilter, Graphic) {
+
+    categories = ["Airports", "Roadway or bridge maintenance", "Roadway safety", "Bike and pedestrian improvements", "MBTA buses", "MBTA commuter rail", "MBTA rapid transit", "Freight", "Planning/funding", "Rail", "Regional transit", "Registry of Motor Vehicles", "Other"];
 
     commentLayer = new FeatureLayer({
       url: "https://gis.massdot.state.ma.us/rh/rest/services/Projects/CIPCommentTool/FeatureServer/2",
       outFields: ["*"],
     });
 
-    function updateComments(projId) {
-      $.post("https://gis.massdot.state.ma.us/rh/rest/services/Projects/CIPCommentTool/FeatureServer/2/query", {
-          where: "Division_ID = '" + projId + "'",
-          outFields: "*",
-          f: "json",
-          returnGeometry: "false",
-          returnIdsOnly: "false"
-        })
-        .done(function (data) {
-          var results = $('#results');
-          results.hide();
-          results.empty();
-          if ($(data.features).length > 0) {
-            $(data.features).each(function () {
-              results.append("<div class='media'><div class='media-body'><h5 class='media-heading user_name'>" + this.attributes.Name + "</h5>" + this.attributes.Comments + "</div></div>");
-            });
-            results.show();
-          } else {
-            results.append("This project currently has no comments111. PROJ ID: " + projId);
-          }
-          results.show();
-          $('#commentForm').show();
-          $('#projectList').show();
-        });
-
-    }
-
     $("#commentForm").submit(function (event) {
-	  console.log(event)
-	  console.log(this)
       formValue = $(this).serializeArray()
-      console.log(formValue);
-      category = $("#catSelectPrj").val()
       var forms = document.getElementsByClassName('needs-validation');
       var validation = Array.prototype.filter.call(forms, function (form) {
         if (form.checkValidity() === false) {
@@ -65,7 +34,6 @@ $(document).ready(function () {
     })
 
     $("#generalCommentForm").submit(function (event) {
-      event.preventDefault();
       formValue = $(this).serializeArray()
       var forms = document.getElementsByClassName('needs-validation');
       var validation = Array.prototype.filter.call(forms, function (form) {
@@ -81,29 +49,11 @@ $(document).ready(function () {
           formValid = true;
           console.log("Save clicked - form is valid");
           projId = '99999'
-          console.log(formValue);
           category = $("#catSelect").val()
           submitComment(formValue);
         }
       });
     })
-
-//    $("#commentForm").submit(function (event) {
-//      event.preventDefault();
-//      formValue = $(this).serializeArray()
-//      console.log(formValue);
-//      category = null
-//      submitComment(formValue);
-//    })
-	  
-    //    $("#generalCommentForm").submit(function (event) {
-    //      event.preventDefault();
-    //      formValue = $(this).serializeArray()
-    //      projId = '99999'
-    //      console.log(formValue);
-    //	  category = $("#catSelect").val()
-    //      submitComment(formValue);
-    //    })
 
     function submitComment(formValue) {
       theComment = {
@@ -125,13 +75,13 @@ $(document).ready(function () {
         $('#prjLikes').hide()
         if (results.addFeatureResults[0].error == null) {
           if (projId == '99999') {
-            $('.comment_success').show()
-            $('#generalCommentForm').trigger("reset");
-            $('#generalCommentForm').hide();
+            $('#generalComment').modal('hide')
+            $('#comment_success_modal').modal('show')
           } else {
-            $('.project_comment_success').show()
+            $('#comment_success_modal').modal('show')
+      	    document.getElementById("commentForm").reset();
+      	    document.getElementById("commentForm").classList.remove('was-validated');
             updateComments(projId);
-            $('#commentForm').trigger("reset");
           }
         } else {
           $('.general_comment_issue').show()
@@ -140,6 +90,32 @@ $(document).ready(function () {
       });
     }
 
+    function updateComments(projId) {
+      $.post("https://gis.massdot.state.ma.us/rh/rest/services/Projects/CIPCommentTool/FeatureServer/2/query", {
+          where: "Division_ID = '" + projId + "'",
+          outFields: "*",
+          f: "json",
+          returnGeometry: "false",
+          returnIdsOnly: "false"
+        })
+        .done(function (data) {
+          var results = $('#results');
+          results.hide();
+          results.empty();
+          if ($(data.features).length > 0) {
+            $(data.features).each(function () {
+              results.append("<div class='media'><div class='media-body'><h5 class='media-heading user_name'>" + this.attributes.Name + "</h5>" + this.attributes.Comments + "</div></div>");
+            });
+            results.show();
+          } else {
+            results.append("This project currently has no comments.");
+          }
+          results.show();
+          $('#commentForm').show();
+          $('#projectList').show();
+        });
+
+    }
 
     $('#likeProject').on('click', function () {
       if (liked === false) {
@@ -165,14 +141,17 @@ $(document).ready(function () {
       }
     })
 
-    categories = ["Airports", "Roadway or bridge maintenance", "Roadway safety", "Bike and pedestrian improvements", "MBTA buses", "MBTA commuter rail", "MBTA rapid transit", "Freight", "Planning/funding", "Rail", "Regional transit", "Registry of Motor Vehicles", "Other"];
+    $(categories).each(function () {
+      $('#catSelectPrj').append(
+        $('<option></option>').val(this).html(this)
+      );
+    });
 
-      $(categories).each(function () {
-        $('#catSelectPrj').append(
-          $('<option></option>').val(this).html(this)
-        );
-      });
-	  
+    $('#generalComment').on('hidden.bs.modal', function (e) {
+      document.getElementById("generalCommentForm").reset();
+      document.getElementById("generalCommentForm").classList.remove('was-validated');
+    })
+
     $('#generalComment').on('shown.bs.modal', function () {
       $('.comment_success').hide()
       $('.general_comment_issue').hide()

@@ -90,8 +90,8 @@
         <p>To view town, RTA, or statewide projects which match the current filters, click on that town or RTA in the map</p>
       </div>
     </div>
-    <div class="col-xl-8" id="viewDiv"> </div>
-    <div class="col-xl-2">
+    <div class="col-xl-8" id="viewDiv"></div>
+    <div class="col-xl-2 overflow-auto">
       <div class="sideContents m-2" id="helpContents">
         <h4 class="">Welcome to the CIP Comment Tool and Interactive Map!</h4>
         <p class="string page_help" id="page_help_main"></p>
@@ -99,7 +99,7 @@
           <button type="button" class="btn btn-primary my-2 my-sm-0 btn-block" data-toggle="modal" data-target="#generalComment">Leave a General Comment</button>
         </form>
       </div>
-      <div id="interactive" class="m-2" style="display: none">
+      <div id="interactive" class="m-2 overflow-auto" style="display: none">
         <div class="comment-form">
           <form id="commentForm" class= "w-100 sideContents needs-validation" novalidate >
             <h4>Leave a Comment</h4>
@@ -108,11 +108,11 @@
               <input type="text" class="form-control" id="nameField" placeholder="Optional" name="nameField">
               <label for="lastField">Last Name</label>
               <input type="text" class="form-control" id="lastField" placeholder="Optional" name="lastField">
-              <label for="emailField">Email (Optional)</label>
+              <label for="emailField">Email</label>
               <input type="text" class="form-control" id="emailField" placeholder="Optional" name="emailField">
 			  <label for="zipField">Zip Code</label>
               <input type="text" class="form-control" id="zipField" placeholder="Optional" name="zipField">
-              <label for="townField">Organization (Optional)</label>
+              <label for="townField">Organization</label>
               <input type="text" class="form-control" id="townField" placeholder="If applicable" name="townField">
             </div>
             <div class="form-group">
@@ -153,6 +153,43 @@
 <div class="modal fade show" id="aboutTool" tabindex="-1" role="dialog" aria-labelledby="aboutToolTitle" aria-hidden="true"> </div>
 <div class="modal fade show" id="generalComment" tabindex="-1" role="dialog" aria-labelledby="generalCommentTitle" aria-hidden="true"> </div>
 <div class="modal fade show" id="loading" tabindex="-1" role="dialog" aria-labelledby="loadingTitle" aria-hidden="true" data-backdrop="static" data-keyboard="false"></div>
+<!-- Modal -->
+<div class="modal fade" id="comment_success_modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Success</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body alert-success" id="comment_success_message">
+        Thank you for your comment
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="comment_failure_modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Failed</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body alert-danger" id="comment_failure_message">
+        Thank you for your comment
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script type="text/javascript">
 function googleTranslateElementInit() {
         new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'ar,es,fr,ht,it,km,ko,pl,pt,ru,vi,zh-CN', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');

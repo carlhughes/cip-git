@@ -19,6 +19,9 @@ $(document).ready(function () {
     Their values change depending on user actions and some of them are
     then used to validate certain functions/steps within the workflow.
     */
+    var highlight;
+    var selectedHighlight;
+    var showPolyGraphic;
     searchedProject = false;
     liked = false;
     townsSql = "Town";
@@ -29,9 +32,6 @@ $(document).ready(function () {
     sql = "1=1"
     projectSearchID = false;
     extentForRegionOfInterest = false;
-    var highlight;
-    var selectedHighlight;
-    var showPolyGraphic;
     hideLoad = false;
     polySymbol = {
       type: "simple-fill",
@@ -41,7 +41,6 @@ $(document).ready(function () {
         width: "2.5px"
       }
     }
-
 
     /*
     These are some ArcGIS JS objects useful for doing things within the map
@@ -164,13 +163,6 @@ $(document).ready(function () {
       });
     }
 
-    //This listens for the user to click a button from a polygon feature with the .polyList class. It will then display all projects associated with that polygon 
-    $(document).on("click", ".polyList", function (e) {
-      existingFeatures = view.popup.features;
-      selectedIndex = view.popup.selectedFeatureIndex;
-      displayPolygonProjects($(this).attr('modeType'), $(this));
-    });
-
     //This function displays projects which are associated with a polygon. It gets called when user clicks the .polyList button
     function displayPolygonProjects(value, id) {
       polyProjects = [];
@@ -282,6 +274,13 @@ $(document).ready(function () {
       });
     }
 
+    //This listens for the user to click a button from a polygon feature with the .polyList class. It will then display all projects associated with that polygon 
+    $(document).on("click", ".polyList", function (e) {
+      existingFeatures = view.popup.features;
+      selectedIndex = view.popup.selectedFeatureIndex;
+      displayPolygonProjects($(this).attr('modeType'), $(this));
+    });
+	  
     //This listens for the user to click a button from an MBTA system feature with the .tProjList class. It will then display all projects associated with that MBTA asset 
     $(document).on("click", ".tProjList", function (e) {
       existingFeatures = view.popup.features;
@@ -318,12 +317,12 @@ $(document).ready(function () {
     map.addMany([projectLocationsPolygonsMapImageLayer, projectLocations, projectLocationsPoints, projectLocationsMBTA]);
     view = new MapView({
       map: map,
-	  center: stateExtent.centroid,
+      center: stateExtent.centroid,
       container: "viewDiv",
       spatialReference: {
         wkid: 3857
       },
-	  zoom: 8,
+      zoom: 8,
       highlightOptions: {
         color: [255, 255, 0, 1],
         haloOpacity: 0.9,
@@ -350,10 +349,8 @@ $(document).ready(function () {
             hideLoad = true;
             $('#loading').modal('hide')
             console.log("Project lines updating: ", val)
-            prjLocationLines.queryFeatureCount().then(function (count) {
-            })
-            prjLocationLines.queryFeatures().then(function (results) {
-            })
+            prjLocationLines.queryFeatureCount().then(function (count) {})
+            prjLocationLines.queryFeatures().then(function (results) {})
           }
         });
       })
@@ -405,6 +402,10 @@ $(document).ready(function () {
         title: "Point Projects"
       }]
     });
+    
+	basemapGallery = new BasemapGallery({
+      id: "basemapGal",
+    });
 
     view.ui.add([{
       component: searchWidget,
@@ -427,10 +428,6 @@ $(document).ready(function () {
       position: "top-left",
       index: 5
     }]);
-
-    var basemapGallery = new BasemapGallery({
-      id: "basemapGal",
-    });
 
     $("#basemap").click(function () {
       console.log(basemapGallery.view);
@@ -496,6 +493,8 @@ $(document).ready(function () {
           }
           results.show();
           $('#interactive').show();
+          document.getElementById("commentForm").reset();
+          document.getElementById("commentForm").classList.remove('was-validated');
         });
     }
 
@@ -809,8 +808,6 @@ $(document).ready(function () {
 
     //This listens for anytime a new feature is selected and displayed in the popup, or someone clicks the map and there is no feature there
     watchUtils.watch(view.popup, "selectedFeature", function (feature) {
-      $('.project_comment_success').hide()
-      $('.project_comment_failure').hide()
       $('#helpContents').show();
       $('#interactive').hide();
       if (feature) {
